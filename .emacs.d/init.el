@@ -253,9 +253,6 @@
 
 (use-package magit)
 
-(use-package evil-magit
-  :after magit)
-
 (mati/leader-keys
   "g"   '(:ignore t :which-key "git")
   "gs"  'magit-status
@@ -270,3 +267,24 @@
   "gf"  'magit-fetch
   "gF"  'magit-fetch-all
   "gr"  'magit-rebase)
+
+;; ORG-MODE
+(use-package org
+  :config
+  (setq org-agenda-files '("~/org/todo.org"
+			   "~/org/contacts.org"))
+  (setq org-agenda-start-with-log-mode t)
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer t)
+
+  (setq org-todo-keywords
+    '((sequence "TODO(t)" "SOMEDAY(s)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+
+
+(use-package org-bullets
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+(mati/leader-keys
+  "a" '(org-agenda-list :which-key "agenda"))
