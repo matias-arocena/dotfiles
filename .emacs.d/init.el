@@ -29,9 +29,7 @@
 ;; Uncomment this to get a reading on packages that get loaded at startup
 (setq use-package-verbose t)
 
-;; On non-Guix systems, "ensure" packages by default
 (setq use-package-always-ensure t)
-
 
 ;; Bootstrap straight.el
 (defvar bootstrap-version)
@@ -57,9 +55,6 @@
 ;; Load the helper package for commands like `straight-x-clean-unused-repos'
 (require 'straight-x)
 
-;; Keyboard
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
 
 ;; Appareance
 
@@ -72,7 +67,6 @@
   ('darwin (set-face-attribute 'default nil :font "Fira Mono" :height 100)))
 
 (use-package doom-themes
-  :ensure t
   :defer t)
 (load-theme 'doom-palenight t)
 (doom-themes-visual-bell-config)
@@ -93,11 +87,9 @@
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 (use-package rainbow-delimiters
-  :ensure t
   :hook (emacs-lisp-mode . rainbow-delimiters-mode))
  
 (use-package which-key
-  :ensure t
   :init (which-key-mode)
   :diminish which-key-mode
   :config
@@ -107,7 +99,6 @@
 (use-package swiper :ensure t)
 
 (use-package ivy
-  :ensure t
   :diminish
   :bind (("C-s" . swiper)
          :map ivy-minibuffer-map
@@ -128,7 +119,8 @@
 
 (use-package counsel
   :demand t
-  :bind (("M-x" . counsel-M-x)         ("C-x b" . counsel-ibuffer)
+  :bind (("M-x" . counsel-M-x)
+	 ("C-x b" . counsel-ibuffer)
          ("C-x C-f" . counsel-find-file)
          ;; ("C-M-j" . counsel-switch-buffer)
          ("C-M-l" . counsel-imenu)
@@ -141,7 +133,6 @@
 
 
 (use-package ivy-rich
-  :ensure t
   :init
   (ivy-rich-mode 1))
 
@@ -151,19 +142,111 @@
 
 
 (use-package doom-modeline
-  :ensure t
   :init (doom-modeline-mode 1)) ; run M-x all-the-icons-install-fonts
 
-
-
 (use-package helpful
-  :ensure t
   :custom
   (counsel-describe-function-function #'helpful-callable)
   (counsel-describe-variable-function #'helpful-variable)
   :bind
-  ([remap describe-function] . helpful-function)
+  ([remap describe-function] . counsel-describe-function)
   ([remap describe-symbol] . helpful-symbol)
-  ([remap describe-variable] . helpful-variable)
+  ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-command] . helpful-command)
   ([remap describe-key] . helpful-key))
+
+;; Keyboard
+(use-package general
+  :config
+  (general-evil-setup t)
+
+  (general-create-definer mati/leader-keys
+    :keymaps '(normal insert visual emacs)
+    :prefix "SPC"
+    :global-prefix "C-SPC")
+
+  (mati/leader-keys
+   "t" '(:ignore t :which-key "toggles")
+   "p" '(:ignore t :which-key "project") 
+   "tt" '(counsel-load-theme :which-key "choose theme")))
+
+(defun mati/evil-hook ()
+  (dolist (mode '(custom-mode
+                  eshell-mode
+                  git-rebase-mode
+                  erc-mode
+                  circe-server-mode
+                  circe-chat-mode
+                  circe-query-mode
+                  sauron-mode
+                  term-mode))
+    (add-to-list 'evil-emacs-state-modes mode)))
+
+
+(use-package undo-tree
+  :init
+  (global-undo-tree-mode 1))
+
+(use-package evil
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-want-C-u-scroll t)
+  (setq evil-want-C-i-jump nil)
+  (setq evil-respect-visual-line-mode t)
+  (setq evil-undo-system 'undo-tree)
+  :config
+  (add-hook 'evil-mode-hook 'mati/evil-hook)
+  (evil-mode 1)
+  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+
+  ;; Use visual line motions even outside of visual-line-mode buffers
+  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+  (evil-set-initial-state 'dashboard-mode 'normal))
+
+
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init))
+
+(use-package hydra)
+
+(defhydra hydra-text-scale (:timeout 4)
+  "scale text"
+  ("j" text-scale-increase "in")
+  ("k" text-scale-decrease "out")
+  ("f" nil "finished" :exit t))
+
+(mati/leader-keys
+ "ts" '(hydra-text-scale/body :which-key "scale text"))
+
+;; Projectile & Git
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :demand t
+  :bind ("C-M-p" . projectile-find-file)
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  (when (file-directory-p "~/Projects/")
+    (setq projectile-project-search-path '("~/Projects/")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+(use-package counsel-projectile
+  :after projectile
+  :config
+  (counsel-projectile-mode))
+
+(mati/leader-keys
+  "pf"  'projectile-find-file
+  "ps"  'projectile-switch-project
+  "pF"  'consult-ripgrep
+  "pp"  'projectile-find-file
+  "pc"  'projectile-compile-project
+  "pd"  'projectile-dired)
