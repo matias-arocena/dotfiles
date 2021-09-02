@@ -8,6 +8,22 @@
 
 (menu-bar-mode -1)          ; Disable the menu bar
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(mac-command-modifier 'control)
+ '(mac-control-modifier nil)
+ '(mac-option-modifier 'meta)
+ '(mac-right-control-modifier 'left)
+ '(mac-right-option-modifier 'alt))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
 
 ;; Initialize package
 (require 'package)
@@ -63,8 +79,7 @@
    (set-face-attribute 'default nil
                        :font "JetBrains Mono"
                        :weight 'light
-		       :height 100))
-  ('darwin (set-face-attribute 'default nil :font "Fira Mono" :height 100)))
+		       :height 100)))
 
 (use-package doom-themes
   :defer t)
@@ -165,8 +180,6 @@
     :prefix "SPC"
     :global-prefix "C-SPC")
 
-  (general-nmap "<SPC>-m" (general-simulate-key "C-c" :state 'normal))
-
   (mati/leader-keys
    "q" '(org-capture :which-key "capture")
    "m" '(general-simulate-C-c-in-normal-state :which-key "+local")
@@ -174,6 +187,9 @@
    "bi" '(ibuffer :which-key "ibuffer")
    "t" '(:ignore t :which-key "toggles")
    "tt" '(counsel-load-theme :which-key "choose theme")))
+
+
+(setq x-alt-keysym 'meta)
 
 (defun mati/evil-hook ()
   (dolist (mode '(custom-mode
@@ -333,3 +349,4 @@
   "a" '(:ingore true :which-key "agenda")
   "aa" '(org-agenda-list :which-key "agenda")
   "ad" '(org-agenda :which-key "dashboard"))
+
