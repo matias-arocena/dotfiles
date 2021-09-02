@@ -165,7 +165,13 @@
     :prefix "SPC"
     :global-prefix "C-SPC")
 
+  (general-nmap "<SPC>-m" (general-simulate-key "C-c" :state 'normal))
+
   (mati/leader-keys
+   "q" '(org-capture :which-key "capture")
+   "m" '(general-simulate-C-c-in-normal-state :which-key "+local")
+   "b" '(:ignore t :which-key "buffer")
+   "bi" '(ibuffer :which-key "ibuffer")
    "t" '(:ignore t :which-key "toggles")
    "tt" '(counsel-load-theme :which-key "choose theme")))
 
@@ -277,8 +283,45 @@
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)
 
+  (require 'org-habit)
+  (add-to-list 'org-modules 'org-habit)
+  (setq org-habit-graph-column 60)
+
+  (setq org-capture-templates
+    `(("t" "Tasks / Projects")
+      ("tt" "Task" entry (file+olp "~/org/todo.org" "Inbox")
+           "* TODO %?\n  SCHEDULED: %U\n  %a\n  %i" :empty-lines 1)
+
+      ("j" "Journal Entries")
+      ("jj" "Journal" entry
+           (file+olp+datetree "~/org/journal.org")
+           "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
+           ;; ,(dw/read-file-as-string "~/Notes/Templates/Daily.org")
+           :clock-in :clock-resume
+           :empty-lines 1)
+      ("jm" "notes" entry
+           (file+olp+datetree "~/org/notes.org")
+           "* %<%I:%M %p> - %a :notes:\n\n%?\n\n"
+           :clock-in :clock-resume
+           :empty-lines 1)
+
+      ("m" "Metrics Capture")
+      ("mw" "Weight" table-line
+       (file+headline "~/org/gym.org" "Weight")
+       "| %U | %^{Weight} | %^{Notes} |" :kill-buffer t)))
+
+  (setq org-refile-targets
+    '(("notes.org" :maxlevel . 1)
+      ("todo.org" :maxlevel . 1)))
+
+  ;; Save Org buffers after refiling!
+  (advice-add 'org-refile :after 'org-save-all-org-buffers)
+
   (setq org-todo-keywords
-    '((sequence "TODO(t)" "SOMEDAY(s)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+	'((sequence "TODO(t)" "SOMEDAY(s)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+;; Configure custom agenda views
+  (setq org-agenda-custom-commands
+    '(("W" "Work Tasks" tags "+Au"))))
 
 
 (use-package org-bullets
@@ -287,4 +330,6 @@
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
 (mati/leader-keys
-  "a" '(org-agenda-list :which-key "agenda"))
+  "a" '(:ingore true :which-key "agenda")
+  "aa" '(org-agenda-list :which-key "agenda")
+  "ad" '(org-agenda :which-key "dashboard"))
