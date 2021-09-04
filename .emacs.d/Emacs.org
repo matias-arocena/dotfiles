@@ -1,4 +1,4 @@
-#+title Emacs Config
+#+title: Emacs Config
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :results silent :mkdirp yes
 
 * Package Setup
@@ -199,9 +199,22 @@
 
 ** For OSX
 #+begin_src emacs-lisp
-  (setq '(mac-command-modifier 'control)
-      '(mac-control-modifier nil)
-      '(mac-option-modifier 'meta))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(mac-command-modifier 'control)
+ '(mac-control-modifier nil)
+ '(mac-option-modifier 'meta)
+ '(mac-right-control-modifier 'left)
+ '(mac-right-option-modifier 'alt))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
 #+end_src
 
 ** EVIL
@@ -404,7 +417,7 @@
     
     (require 'org-tempo)
     
-    (add-to-list 'org-structure-tem biplate-alist '("el" . "src emacs-lisp"))
+    (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
     (add-to-list 'org-structure-template-alist '("py" . "src python"))
     (add-to-list 'org-structure-template-alist '("cpp" . "src c++"))
   
@@ -414,7 +427,7 @@
 #+begin_src emacs-lisp
 ;; Automatically tangle our Emacs.org config file when we save it
 (defun mati/org-babel-tangle-config ()
-  (when (string-equal (buffer-file-name)
+ (when (string-equal (buffer-file-name)
                       (expand-file-name "~/.emacs.d/Emacs.org"))
     ;; Dynamic scoping to the rescue
     (let ((org-confirm-babel-evaluate nil))

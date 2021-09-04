@@ -2,9 +2,9 @@
 (require 'package)
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("melpa-stable" . "https://stable.melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")))
+			 ("melpa-stable" . "https://stable.melpa.org/packages/")
+			 ("org" . "https://orgmode.org/elpa/")
+			 ("elpa" . "https://elpa.gnu.org/packages/")))
 
 (package-initialize)
 (unless package-archive-contents
@@ -16,7 +16,7 @@
 (require 'use-package)
 
 ;; Uncomment this to get a reading on packages that get loaded at startup
-(setq use-package-verbose t)
+;; (setq use-package-verbose t)
 
 (setq use-package-always-ensure t)
 
@@ -27,9 +27,9 @@
       (bootstrap-version 5))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
-        (url-retrieve-synchronously
-        "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-        'silent 'inhibit-cookies)
+	(url-retrieve-synchronously
+	"https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+	'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
@@ -44,20 +44,15 @@
 ;; Load the helper package for commands like `straight-x-clean-unused-repos'
 (require 'straight-x)
 
+;; Thanks, but no thanks
+(setq inhibit-startup-message t)
 
-;; Appareance
+(scroll-bar-mode -1)        ; Disable visible scrollbar
+(tool-bar-mode -1)          ; Disable the toolbar
+(tooltip-mode -1)           ; Disable tooltips
+(set-fringe-mode 10)        ; Give some breathing room
 
-(pcase system-type
-  ((or 'gnu/linux 'windows-nt 'cygwin)
-   (set-face-attribute 'default nil
-                       :font "JetBrains Mono"
-                       :weight 'light
-		       :height 100)))
-
-(use-package doom-themes
-  :defer t)
-(load-theme 'doom-palenight t)
-(doom-themes-visual-bell-config)
+(menu-bar-mode -1)          ; Disable the menu bar
 
 (setq visible-bell t)
 
@@ -68,15 +63,28 @@
 (dolist (mode '(text-mode-hook
                 prog-mode-hook
                 conf-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 1))))
+        (add-hook mode (lambda () (display-line-numbers-mode 1))))
 
 ;; Override some modes which derive from the above
 (dolist (mode '(org-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+        (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+(pcase system-type
+  ((or 'gnu/linux 'windows-nt 'cygwin)
+   (set-face-attribute 'default nil
+		       :font "JetBrains Mono"
+		       :weight 'light
+		       :height 100)))
+
+(use-package doom-themes
+  :defer t)
+(load-theme 'doom-palenight t)
+(doom-themes-visual-bell-config)
 
 (use-package rainbow-delimiters
   :hook (emacs-lisp-mode . rainbow-delimiters-mode))
- 
+
+;; Shotcut suggestions
 (use-package which-key
   :init (which-key-mode)
   :diminish which-key-mode
@@ -124,7 +132,6 @@
   :init
   (ivy-rich-mode 1))
 
-;; Modeline
 (use-package diminish
   :ensure t)
 
@@ -133,17 +140,16 @@
   :init (doom-modeline-mode 1)) ; run M-x all-the-icons-install-fonts
 
 (use-package helpful
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
-  :bind
-  ([remap describe-function] . counsel-describe-function)
-  ([remap describe-symbol] . helpful-symbol)
-  ([remap describe-variable] . counsel-describe-variable)
-  ([remap describe-command] . helpful-command)
-  ([remap describe-key] . helpful-key))
+ :custom
+ (counsel-describe-function-function #'helpful-callable)
+ (counsel-describe-variable-function #'helpful-variable)
+ :bind
+ ([remap describe-function] . counsel-describe-function)
+ ([remap describe-symbol] . helpful-symbol)
+ ([remap describe-variable] . counsel-describe-variable)
+ ([remap describe-command] . helpful-command)
+ ([remap describe-key] . helpful-key))
 
-;; Keyboard
 (use-package general
   :config
   (general-evil-setup t)
@@ -151,31 +157,35 @@
   (general-create-definer mati/leader-keys
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
-    :global-prefix "C-SPC")
+    :global-prefix "C-SPC"))
 
-  (mati/leader-keys
-   "q" '(org-capture :which-key "capture")
-   "m" '(general-simulate-C-c-in-normal-state :which-key "+local")
-   "b" '(:ignore t :which-key "buffer")
-   "bi" '(ibuffer :which-key "ibuffer")
-   "t" '(:ignore t :which-key "toggles")
-   "tt" '(counsel-load-theme :which-key "choose theme")))
-
-(setq '(mac-command-modifier 'control)
-    '(mac-control-modifier nil)
-    '(mac-option-modifier 'meta))
-
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(mac-command-modifier 'control)
+ '(mac-control-modifier nil)
+ '(mac-option-modifier 'meta)
+ '(mac-right-control-modifier 'left)
+ '(mac-right-option-modifier 'alt))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
 
 (defun mati/evil-hook ()
   (dolist (mode '(custom-mode
-                  eshell-mode
-                  git-rebase-mode
-                  erc-mode
-                  circe-server-mode
-                  circe-chat-mode
-                  circe-query-mode
-                  sauron-mode
-                  term-mode))
+		  eshell-mode
+		  git-rebase-mode
+		  erc-mode
+		  circe-server-mode
+		  circe-chat-mode
+		  circe-query-mode
+		  sauron-mode
+		  term-mode))
     (add-to-list 'evil-emacs-state-modes mode)))
 
 
@@ -219,9 +229,37 @@
   ("f" nil "finished" :exit t))
 
 (mati/leader-keys
- "ts" '(hydra-text-scale/body :which-key "scale text"))
+    "q" '(org-capture :which-key "capture")
+    "m" '(general-simulate-C-c-in-normal-state :which-key "+local")
+    "b" '(:ignore t :which-key "buffer")
+    "bi" '(ibuffer :which-key "ibuffer")
+    "t" '(:ignore t :which-key "toggles")
+    "tt" '(counsel-load-theme :which-key "choose theme")
+    "ts" '(hydra-text-scale/body :which-key "scale text")
+    "p" '(:ignore t :which-key "project") 
+    "pf"  'projectile-find-file
+    "ps"  'projectile-switch-project
+    "pF"  'consult-ripgrep
+    "pp"  'projectile-find-file
+    "pc"  'projectile-compile-project
+    "pd"  'projectile-dired 
+    "g"   '(:ignore t :which-key "git")
+    "gs"  'magit-status
+    "gd"  'magit-diff-unstaged
+    "gc"  'magit-branch-or-checkout
+    "gl"   '(:ignore t :which-key "log")
+    "glc" 'magit-log-current
+    "glf" 'magit-log-buffer-file
+    "gb"  'magit-branch
+    "gP"  'magit-push-current
+    "gp"  'magit-pull-branch
+    "gf"  'magit-fetch
+    "gF"  'magit-fetch-all
+    "gr"  'magit-rebase
+    "a" '(:ingore true :which-key "agenda")
+    "aa" '(org-agenda-list :which-key "agenda")
+    "ad" '(org-agenda :which-key "dashboard"))
 
-;; Projectile & Git
 (use-package projectile
   :diminish projectile-mode
   :config (projectile-mode)
@@ -239,33 +277,8 @@
   :config
   (counsel-projectile-mode))
 
-(mati/leader-keys
-  "p" '(:ignore t :which-key "project") 
-  "pf"  'projectile-find-file
-  "ps"  'projectile-switch-project
-  "pF"  'consult-ripgrep
-  "pp"  'projectile-find-file
-  "pc"  'projectile-compile-project
-  "pd"  'projectile-dired)
-
 (use-package magit)
 
-(mati/leader-keys
-  "g"   '(:ignore t :which-key "git")
-  "gs"  'magit-status
-  "gd"  'magit-diff-unstaged
-  "gc"  'magit-branch-or-checkout
-  "gl"   '(:ignore t :which-key "log")
-  "glc" 'magit-log-current
-  "glf" 'magit-log-buffer-file
-  "gb"  'magit-branch
-  "gP"  'magit-push-current
-  "gp"  'magit-pull-branch
-  "gf"  'magit-fetch
-  "gF"  'magit-fetch-all
-  "gr"  'magit-rebase)
-
-;; ORG-MODE
 (use-package org
   :config
   (setq org-agenda-files '("~/org/todo.org"
@@ -281,20 +294,20 @@
   (setq org-capture-templates
     `(("t" "Tasks / Projects")
       ("tt" "Task" entry (file+olp "~/org/todo.org" "Inbox")
-           "* TODO %?\n  SCHEDULED: %U\n  %a\n  %i" :empty-lines 1)
+	   "* TODO %?\n  SCHEDULED: %U\n  %a\n  %i" :empty-lines 1)
 
       ("j" "Journal Entries")
       ("jj" "Journal" entry
-           (file+olp+datetree "~/org/journal.org")
-           "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
-           ;; ,(dw/read-file-as-string "~/Notes/Templates/Daily.org")
-           :clock-in :clock-resume
-           :empty-lines 1)
+	   (file+olp+datetree "~/org/journal.org")
+	   "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
+	   ;; ,(dw/read-file-as-string "~/Notes/Templates/Daily.org")
+	   :clock-in :clock-resume
+	   :empty-lines 1)
       ("jm" "notes" entry
-           (file+olp+datetree "~/org/notes.org")
-           "* %<%I:%M %p> - %a :notes:\n\n%?\n\n"
-           :clock-in :clock-resume
-           :empty-lines 1)
+	   (file+olp+datetree "~/org/notes.org")
+	   "* %<%I:%M %p> - %a :notes:\n\n%?\n\n"
+	   :clock-in :clock-resume
+	   :empty-lines 1)
 
       ("m" "Metrics Capture")
       ("mw" "Weight" table-line
@@ -305,8 +318,15 @@
     '(("notes.org" :maxlevel . 1)
       ("todo.org" :maxlevel . 1)))
 
-  ;; Save Org buffers after refiling!
+  ;; Configure autosaving
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
+  (advice-add 'org-agenda-quit :before 'org-save-all-org-buffers)
+  (advice-add 'org-deadline :after 'org-save-all-org-buffers)
+  (advice-add 'org-agenda-deadline :after 'org-save-all-org-buffers)
+  (advice-add 'org-schedule :after 'org-save-all-org-buffers)
+  (advice-add 'org-agenda-schedule :after 'org-save-all-org-buffers)
+
+
 
   (setq org-todo-keywords
 	'((sequence "TODO(t)" "SOMEDAY(s)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
@@ -320,8 +340,26 @@
   :custom
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
-(mati/leader-keys
-  "a" '(:ingore true :which-key "agenda")
-  "aa" '(org-agenda-list :which-key "agenda")
-  "ad" '(org-agenda :which-key "dashboard"))
+(org-babel-do-load-languages
+    'org-babel-load-languages
+    '((emacs-lisp . t)
+    (python . t)
+    (C . t)
+    (org . t)))
+(setq org-confirm-babel-evaluate nil)  
 
+(require 'org-tempo)
+
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+(add-to-list 'org-structure-template-alist '("py" . "src python"))
+(add-to-list 'org-structure-template-alist '("cpp" . "src c++"))
+
+;; Automatically tangle our Emacs.org config file when we save it
+(defun mati/org-babel-tangle-config ()
+ (when (string-equal (buffer-file-name)
+                      (expand-file-name "~/.emacs.d/Emacs.org"))
+    ;; Dynamic scoping to the rescue
+    (let ((org-confirm-babel-evaluate nil))
+      (org-babel-tangle))))
+
+(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'mati/org-babel-tangle-config)))
