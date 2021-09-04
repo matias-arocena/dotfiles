@@ -1,30 +1,3 @@
-;; Thanks, but no thanks
-(setq inhibit-startup-message t)
-
-(scroll-bar-mode -1)        ; Disable visible scrollbar
-(tool-bar-mode -1)          ; Disable the toolbar
-(tooltip-mode -1)           ; Disable tooltips
-(set-fringe-mode 10)        ; Give some breathing room
-
-(menu-bar-mode -1)          ; Disable the menu bar
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(mac-command-modifier 'control)
- '(mac-control-modifier nil)
- '(mac-option-modifier 'meta)
- '(mac-right-control-modifier 'left)
- '(mac-right-option-modifier 'alt))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-
 ;; Initialize package
 (require 'package)
 
@@ -188,8 +161,10 @@
    "t" '(:ignore t :which-key "toggles")
    "tt" '(counsel-load-theme :which-key "choose theme")))
 
+(setq '(mac-command-modifier 'control)
+    '(mac-control-modifier nil)
+    '(mac-option-modifier 'meta))
 
-(setq x-alt-keysym 'meta)
 
 (defun mati/evil-hook ()
   (dolist (mode '(custom-mode
