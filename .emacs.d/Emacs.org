@@ -270,10 +270,12 @@
 	(define-key evil-normal-state-map (kbd "SPC h") (general-simulate-key "C-h"))
 	(define-key evil-normal-state-map (kbd "SPC x") (general-simulate-key "C-x"))
 	(define-key evil-normal-state-map (kbd "SPC c") (general-simulate-key "C-c"))
+	(define-key evil-normal-state-map (kbd "SPC m") (general-simulate-key "M-x"))
 	
 	(define-key evil-insert-state-map (kbd "C-SPC h") (general-simulate-key "C-h"))
 	(define-key evil-insert-state-map (kbd "C-SPC x") (general-simulate-key "C-x"))
 	(define-key evil-insert-state-map (kbd "C-SPC c") (general-simulate-key "C-c"))
+	(define-key evil-insert-state-map (kbd "C-SPC m") (general-simulate-key "M-x"))
 	
 	;; Use visual line motions even outside of visual-line-mode buffers
 	(evil-global-set-key 'motion "j" 'evil-next-visual-line)
@@ -354,6 +356,7 @@
     "fo" '(find-file :which-key "open")
     "h" '(:ignore true :which-key "help")
     "c" '(:ignore true :which-key "C-c")
+    "m" '(:ignore true :which-key "M-x")
     "x" '(:ignore true :which-key "C-x"))
 
 
@@ -582,7 +585,6 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
     :custom (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
 #+end_src
-
 
 ** org-babel  
 #+begin_src emacs-lisp
