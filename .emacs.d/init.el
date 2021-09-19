@@ -178,7 +178,7 @@
 	(general-create-definer mati/leader-keys
 	    :keymaps '(normal insert visual emacs)
 	    :prefix "SPC"
-	    :global-prefix "C-SPC"))
+	    :global-prefix"C-SPC"))
 
 (custom-set-variables
     ;; custom-set-variables was added by Custom.
@@ -291,7 +291,7 @@
 
     "p" '(:ignore t :which-key "project") 
     "pf"  'projectile-find-file
-    "ps"  'projectile-switch-project
+    "po"  '(projectile-switch-project :which-key "open")
     "pF"  'consult-ripgrep
     "pc"  'projectile-compile-project
     "pd"  'projectile-dired 
@@ -311,6 +311,8 @@
     "gr"  'magit-rebase
 
     ":" '(eval-expression :which-key "eval")
+
+    "u" '(ue-command-map :which-key "unreal")
     
     "f" '(:ignore true :which-key "files")
     "fo" '(find-file :which-key "open")
@@ -347,122 +349,157 @@
 (use-package magit)
 
 (defun mati/lsp-mode-setup ()
-    (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-    (lsp-headerline-breadcrumb-mode))
+(setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+(lsp-headerline-breadcrumb-mode))
 
 (use-package lsp-mode
-    :commands (lsp lsp-deferred)
-    :hook ((lsp-mode . mati/lsp-mode-setup)
-	   (prog-mode . lsp-mode))
-    :init
-    (setq lsp-keymap-prefix "C-l")  ;; Or 'C-l', 's-l'
-    :config
-    (lsp-enable-which-key-integration t))
+:commands (lsp lsp-deferred)
+:hook ((lsp-mode . mati/lsp-mode-setup)
+	(prog-mode . lsp-mode))
+:init
+(setq lsp-keymap-prefix "C-l")  ;; Or 'C-l', 's-l'
+:config
+(lsp-enable-which-key-integration t))
 
 (use-package lsp-ui
-    :hook (lsp-mode . lsp-ui-mode)
-    :custom
-    (lsp-ui-doc-position 'bottom))
+:hook (lsp-mode . lsp-ui-mode)
+:custom
+(lsp-ui-doc-position 'bottom))
 
 (use-package lsp-treemacs
-    :after lsp)
+:after lsp)
 
 (use-package lsp-ivy)
 
 (use-package company
-    :after lsp-mode
-    :hook (lsp-mode . company-mode)
-    :bind (:map company-active-map ("<tab>" . company-complete-selection))
-	(:map lsp-mode-map ("<tab>" . company-indent-or-complete-common))
-    :custom
-    (company-minimum-prefix-length 1)
-    (company-idle-delay 0.0))
+:after lsp-mode
+:hook (lsp-mode . company-mode)
+:bind (:map company-active-map ("C-SPC" . company-complete-selection))
+    (:map lsp-mode-map ("C-SPC" . company-indent-or-complete-common))
+:custom
+(company-minimum-prefix-length 1)
+(company-idle-delay 0.0))
 
 (use-package company-box
-    :hook (company-mode . company-box-mode))
+:hook (company-mode . company-box-mode))
+
+(use-package flycheck
+  :init   (global-flycheck-mode t))
 
 (use-package company-tabnine
-    :after company
-    :config
-	(add-to-list 'company-backends #'company-tabnine)
-	
-	;; Trigger completion immediately.
-	(setq company-idle-delay 0.4)
+:after company
+:config
+    (add-to-list 'company-backends #'company-tabnine)
 
-	;; Number the candidates (use M-1, M-2 etc to select completions).
-	(setq company-show-numbers t))
+    ;; Trigger completion immediately.
+    (setq company-idle-delay 0.4)
+
+    ;; Number the candidates (use M-1, M-2 etc to select completions).
+    (setq company-show-numbers t))
 
 (use-package evil-nerd-commenter
-    :bind ("C-/" . evilnc-comment-or-uncomment-lines))
+:bind ("C-/" . evilnc-comment-or-uncomment-lines))
+
+(use-package dap-mode
+  ;; Uncomment the config below if you want all UI panes to be hidden by default!
+  ;; :custom
+  ;; (lsp-enable-dap-auto-configure nil)
+  ;; :config
+  ;; (dap-ui-mode 1)
+
+  :config
+  ;; install native debug. The first time run dap-gdb-lldb-setup
+  ;; Then do dap-debug or dap-debug-edit-template and selet GBD or LLDB configuration.
+  (require 'dap-gdb-lldb)
+
+  ;; install go debug. The first time run dap-go-setup
+  (require 'dap-go)
+
+  ;; install python debug. Run pip install "ptvsd>=4.2"
+  (require 'dap-python)
+
+  ;; powershell debug.
+  (require 'dap-pwsh)
+  
+  ;; Bind `C-c l d` to `dap-hydra` for easy access
+  (general-define-key
+    :keymaps 'lsp-mode-map
+    :prefix lsp-keymap-prefix
+    "d" '(dap-hydra t :wk "debugger")))
+
+(use-package modern-cpp-font-lock
+:config (modern-c++-font-lock-global-mode t))
+
+(use-package clang-format)
 
 (use-package ue
-    :straight (ue :type git :host gitlab :repo "unrealemacs/ue.el")
-    :init (ue-global-mode))
+:straight (ue :type git :host gitlab :repo "unrealemacs/ue.el")
+:init (ue-global-mode))
 
 (use-package org
-    :config
-	(setq org-agenda-files '("~/org/todo.org"
-				    "~/org/contacts.org"))
-	(setq org-agenda-start-with-log-mode t)
-	(setq org-log-done 'time)
-	(setq org-log-into-drawer t)
+:config
+    (setq org-agenda-files '("~/org/todo.org"
+			    "~/org/contacts.org"))
+    (setq org-agenda-start-with-log-mode t)
+    (setq org-log-done 'time)
+    (setq org-log-into-drawer t)
 
-	(require 'org-habit)
-	(add-to-list 'org-modules 'org-habit)
-	(setq org-habit-graph-column 60)
+    (require 'org-habit)
+    (add-to-list 'org-modules 'org-habit)
+    (setq org-habit-graph-column 60)
 
-	(setq org-capture-templates
-	    `(("t" "Tasks / Projects")
-	    ("tt" "Task" entry (file+olp "~/org/todo.org" "Inbox")
-		    "* TODO %?\n  SCHEDULED: %U\n  %a\n  %i" :empty-lines 1)
+    (setq org-capture-templates
+	`(("t" "Tasks / Projects")
+	("tt" "Task" entry (file+olp "~/org/todo.org" "Inbox")
+		"* TODO %?\n  SCHEDULED: %U\n  %a\n  %i" :empty-lines 1)
 
-	    ("j" "Journal Entries")
-	    ("jj" "Journal" entry
-		    (file+olp+datetree "~/org/journal.org")
-		    "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
-		    ;; ,(dw/read-file-as-string "~/Notes/Templates/Daily.org")
-		    :clock-in :clock-resume
-		    :empty-lines 1)
-	    ("jm" "notes" entry
-		    (file+olp+datetree "~/org/notes.org")
-		    "* %<%I:%M %p> - %a :notes:\n\n%?\n\n"
-		    :clock-in :clock-resume
-		    :empty-lines 1)
+	("j" "Journal Entries")
+	("jj" "Journal" entry
+		(file+olp+datetree "~/org/journal.org")
+		"\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
+		;; ,(dw/read-file-as-string "~/Notes/Templates/Daily.org")
+		:clock-in :clock-resume
+		:empty-lines 1)
+	("jm" "notes" entry
+		(file+olp+datetree "~/org/notes.org")
+		"* %<%I:%M %p> - %a :notes:\n\n%?\n\n"
+		:clock-in :clock-resume
+		:empty-lines 1)
 
-	    ("m" "Metrics Capture")
-	    ("mw" "Weight" table-line
-		(file+headline "~/org/gym.org" "Weight")
-		"| %U | %^{Weight} | %^{Notes} |" :kill-buffer t)))
+	("m" "Metrics Capture")
+	("mw" "Weight" table-line
+	    (file+headline "~/org/gym.org" "Weight")
+	    "| %U | %^{Weight} | %^{Notes} |" :kill-buffer t)))
 
-	(setq org-refile-targets
-	    '(("notes.org" :maxlevel . 1)
-	    ("todo.org" :maxlevel . 1)))
-
-
-	;; Configure autosaving
-	(advice-add 'org-agenda-todo :after
-		    (lambda (&rest _)
-			(org-save-all-org-buffers)))
+    (setq org-refile-targets
+	'(("notes.org" :maxlevel . 1)
+	("todo.org" :maxlevel . 1)))
 
 
+    ;; Configure autosaving
+    (advice-add 'org-agenda-todo :after
+		(lambda (&rest _)
+		    (org-save-all-org-buffers)))
 
-	(setq org-todo-keywords
-		'((sequence "TODO(t)" "SOMEDAY(s)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
-	;; Configure custom agenda views
-	(setq org-agenda-custom-commands
-	    '(("W" "Work Tasks" tags "+Au"))))
+
+
+    (setq org-todo-keywords
+	    '((sequence "TODO(t)" "SOMEDAY(s)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+    ;; Configure custom agenda views
+    (setq org-agenda-custom-commands
+	'(("W" "Work Tasks" tags "+Au"))))
 
 
 (use-package org-bullets
-    :hook (org-mode . org-bullets-mode)
-    :custom (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+:hook (org-mode . org-bullets-mode)
+:custom (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
 (org-babel-do-load-languages
-    'org-babel-load-languages
-    '((emacs-lisp . t)
-    (python . t)
-    (C . t)
-    (org . t)))
+'org-babel-load-languages
+'((emacs-lisp . t)
+(python . t)
+(C . t)
+(org . t)))
 (setq org-confirm-babel-evaluate nil)  
 (setq org-src-preserve-indentation t)
 
@@ -474,10 +511,10 @@
 
 ;; Automatically tangle our Emacs.org config file when we save it
 (defun mati/org-babel-tangle-config ()
-    (when (string-equal (buffer-file-name)
-		    (expand-file-name "~/.emacs.d/Emacs.org"))
-	;; Dynamic scoping to the rescue
-	(let ((org-confirm-babel-evaluate nil))
-	(org-babel-tangle))))
+(when (string-equal (buffer-file-name)
+		(expand-file-name "~/.emacs.d/Emacs.org"))
+    ;; Dynamic scoping to the rescue
+    (let ((org-confirm-babel-evaluate nil))
+    (org-babel-tangle))))
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'mati/org-babel-tangle-config)))
