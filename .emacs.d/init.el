@@ -191,15 +191,6 @@
 	    term-mode))
 	(add-to-list 'evil-emacs-state-modes mode)))
 
-(defun mati/evil-simulate-c-h ()
-    (general-simulate-key "C-h"))
-
-(defun mati/evil-simulate-c-x ()
-    (general-simulate-key "C-x"))
-
-(defun mati/evil-simulate-c-c- ()
-    (general-simulate-key "C-c"))
-
 (use-package undo-tree			
     :init
 	(global-undo-tree-mode 1)
@@ -220,16 +211,20 @@
 	    ("C-g" . 'evil-normal-state)
 	    ("C-h" . 'evil-delete-backward-char-and-join)
 	    ("C-z" . nil)
-       :map evil-normal-state-map
-            ("SPC h" . mati/evil-simulate-c-h)
-	    ("SPC x" . mati/evil-simulate-c-x)
-	    ("SPC c" . mati/evil-simulate-c-c)
        :map evil-motion-state-map
             ("C-z" . nil))
     :config
 	(add-hook 'evil-mode-hook 'mati/evil-hook)
 	(evil-mode 1)
-
+	
+	(define-key evil-normal-state-map (kbd "SPC h") (general-simulate-key "C-h"))
+	(define-key evil-normal-state-map (kbd "SPC x") (general-simulate-key "C-x"))
+	(define-key evil-normal-state-map (kbd "SPC c") (general-simulate-key "C-c"))
+	
+	(define-key evil-insert-state-map (kbd "C-SPC h") (general-simulate-key "C-h"))
+	(define-key evil-insert-state-map (kbd "C-SPC x") (general-simulate-key "C-x"))
+	(define-key evil-insert-state-map (kbd "C-SPC c") (general-simulate-key "C-c"))
+	
 	;; Use visual line motions even outside of visual-line-mode buffers
 	(evil-global-set-key 'motion "j" 'evil-next-visual-line)
 	(evil-global-set-key 'motion "k" 'evil-previous-visual-line)
@@ -271,14 +266,13 @@
     "bo" '(counsel-ibuffer :which-key "open") 
 
     "t" '(:ignore t :which-key "toggles")
-    "tt" '(counsel-load-theme :which-key "choose theme")
+    "tt" '(treemacs :which-key "browse dir tree")
     "ts" '(hydra-text-scale/body :which-key "scale text")
 
     "p" '(:ignore t :which-key "project") 
     "pf"  'projectile-find-file
     "ps"  'projectile-switch-project
     "pF"  'consult-ripgrep
-    "pp"  'projectile-find-file
     "pc"  'projectile-compile-project
     "pd"  'projectile-dired 
 
@@ -296,6 +290,8 @@
     "gF"  'magit-fetch-all
     "gr"  'magit-rebase
 
+    ":" '(eval-expression :which-key "eval")
+    
     "f" '(:ignore true :which-key "files")
     "fo" '(find-file :which-key "open")
     "h" '(:ignore true :which-key "help")
@@ -363,6 +359,17 @@
 (use-package company-box
     :hook (company-mode . company-box-mode))
 
+(use-package company-tabnine
+    :after company
+    :config
+	(add-to-list 'company-backends #'company-tabnine)
+	
+	;; Trigger completion immediately.
+	(setq company-idle-delay 0.4)
+
+	;; Number the candidates (use M-1, M-2 etc to select completions).
+	(setq company-show-numbers t))
+
 (use-package evil-nerd-commenter
     :bind ("C-/" . evilnc-comment-or-uncomment-lines))
 
@@ -411,13 +418,6 @@
 
 
 	;; Configure autosaving
-	;; (advice-add 'org-refile :after #'org-save-all-org-buffers)
-	;; (advice-add 'org-deadline :after #'org-save-all-org-buffers)
-	;; (advice-add 'org-schedule :after #'org-save-all-org-buffers)
-	;; (advice-add 'org-todo :after #'org-save-all-org-buffers)
-	;; (advice-add 'org-agenda-quit :before #'org-save-all-org-buffers)
-	;; (advice-add 'org-agenda-deadline :after #'org-save-all-org-buffers)
-	;; (advice-add 'org-agenda-schedule :after #'org-save-all-org-buffers)
 	(advice-add 'org-agenda-todo :after
 		    (lambda (&rest _)
 			(org-save-all-org-buffers)))
@@ -452,10 +452,10 @@
 
 ;; Automatically tangle our Emacs.org config file when we save it
 (defun mati/org-babel-tangle-config ()
-(when (string-equal (buffer-file-name)
+    (when (string-equal (buffer-file-name)
 		    (expand-file-name "~/.emacs.d/Emacs.org"))
-    ;; Dynamic scoping to the rescue
-    (let ((org-confirm-babel-evaluate nil))
-    (org-babel-tangle))))
+	;; Dynamic scoping to the rescue
+	(let ((org-confirm-babel-evaluate nil))
+	(org-babel-tangle))))
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'mati/org-babel-tangle-config)))
