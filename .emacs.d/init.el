@@ -1,3 +1,26 @@
+;;; GNU/Linux
+
+(when (eq system-type 'gnu/linux)
+  ;; Add GNU/Linux specific stuff here
+  )
+
+;;; macOS
+(when (eq system-type 'darwin)
+  ;; Ensure environment  variables inside Emacs look  the same as in  the user's
+  ;; shell.
+  (use-package exec-path-from-shell
+    :config
+    (setq exec-path-from-shell-arguments nil)
+    (exec-path-from-shell-initialize)))
+
+;;; Windows
+
+(when (eq system-type 'windows-nt)
+  ;; Add Windows specific stuff here
+    ;; Kudos to Jeffrey Snover: https://docs.microsoft.com/en-us/archive/blogs/dotnetinterop/run-powershell-as-a-shell-within-emacs
+    (setq explicit-shell-file-name "powershell.exe")
+    (setq explicit-powershell.exe-args '()))
+
 (require 'server)
 (when (not (server-running-p))
     (server-start))
@@ -66,6 +89,15 @@
 ;; Load the helper package for commands like `straight-x-clean-unused-repos'
 (require 'straight-x)
 
+  (use-package auto-package-update
+    :custom
+    (auto-package-update-interval 7)
+    (auto-package-update-prompt-before-update t)
+    (auto-package-update-hide-results t)
+    :config
+    (auto-package-update-maybe)
+    (auto-package-update-at-time "20:00"))
+
 ;; Thanks, but no thanks
 (setq inhibit-startup-message t)
 
@@ -87,9 +119,12 @@
 		conf-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 1))))
 
-;; Override some modes which derive from the above
-(dolist (mode '(org-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+;; Disable line numbers for some modes
+(dolist (mode '(org-mode-hook
+                shell-mode-hook
+		treemacs-mode-hook
+                eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 (pcase system-type
     ((or 'gnu/linux 'windows-nt 'cygwin)
@@ -310,12 +345,13 @@
     "gF"  'magit-fetch-all
     "gr"  'magit-rebase
 
-    ":" '(eval-expression :which-key "eval")
-
     "u" '(ue-command-map :which-key "unreal")
     
     "f" '(:ignore true :which-key "files")
     "fo" '(find-file :which-key "open")
+
+    ":" '(eval-expression :which-key "eval")
+    "s" '(shell :which-key "shell")
     "h" '(:ignore true :which-key "help")
     "c" '(:ignore true :which-key "C-c")
     "m" '(:ignore true :which-key "M-x")
@@ -400,6 +436,22 @@
 (use-package evil-nerd-commenter
 :bind ("C-/" . evilnc-comment-or-uncomment-lines))
 
+(use-package xterm-color
+  :straight (xterm-coloer :type git :host github :repo "atomontage/xterm-color"))
+
+
+(setq comint-output-filter-functions
+      (remove 'ansi-color-process-output comint-output-filter-functions))
+
+(add-hook 'shell-mode-hook
+          (lambda ()
+            ;; Disable font-locking in this buffer to improve performance
+            (font-lock-mode -1)
+            ;; Prevent font-locking from being re-enabled in this buffer
+            (make-local-variable 'font-lock-function)
+            (setq font-lock-function (lambda (_) nil))
+            (add-hook 'comint-preoutput-filter-functions 'xterm-color-filter nil t)))
+
 (use-package dap-mode
   ;; Uncomment the config below if you want all UI panes to be hidden by default!
   ;; :custom
@@ -432,9 +484,9 @@
 
 (use-package clang-format)
 
-(use-package ue
-:straight (ue :type git :host gitlab :repo "unrealemacs/ue.el")
-:init (ue-global-mode))
+  (use-package ue
+  :straight (ue :type git :host gitlab :repo "unrealemacs/ue.el")
+  :init (ue-global-mode))
 
 (use-package org
 :config
