@@ -89,14 +89,14 @@
 ;; Load the helper package for commands like `straight-x-clean-unused-repos'
 (require 'straight-x)
 
-  (use-package auto-package-update
-    :custom
-    (auto-package-update-interval 7)
-    (auto-package-update-prompt-before-update t)
-    (auto-package-update-hide-results t)
-    :config
-    (auto-package-update-maybe)
-    (auto-package-update-at-time "20:00"))
+(use-package auto-package-update
+  :custom
+  (auto-package-update-interval 7)
+  (auto-package-update-prompt-before-update t)
+  (auto-package-update-hide-results t)
+  :config
+  (auto-package-update-maybe)
+  (auto-package-update-at-time "20:00"))
 
 ;; Thanks, but no thanks
 (setq inhibit-startup-message t)
@@ -125,6 +125,8 @@
 		treemacs-mode-hook
                 eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+(fset 'yes-or-no-p 'y-or-n-p)
 
 (pcase system-type
     ((or 'gnu/linux 'windows-nt 'cygwin)
@@ -216,21 +218,35 @@
 	    :global-prefix"C-SPC"))
 
 (custom-set-variables
-    ;; custom-set-variables was added by Custom.
-    ;; If you edit it by hand, you could mess it up, so be careful.
-    ;; Your init file should contain only one such instance.
-    ;; If there is more than one, they won't work right.
-    '(mac-command-modifier 'control)
-    '(mac-control-modifier nil)
-    '(mac-option-modifier 'meta)
-    '(mac-right-control-modifier 'left)
-    '(mac-right-option-modifier 'alt))
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(mac-command-modifier 'control)
+ '(mac-control-modifier nil)
+ '(mac-option-modifier 'meta)
+ '(mac-right-control-modifier 'left)
+ '(mac-right-option-modifier 'alt)
+ '(safe-local-variable-values
+   '((eval let
+	   ((root
+	     (projectile-project-root)))
+	   (setq-local company-clang-arguments
+		       (list
+			(concat "-I" root "Source/ShooterGame/Public")
+			(concat "-I" root "Source/ShooterGame/Public/Actors")
+			(concat "-I" root "Source/ShooterGame/Public/AI")))
+	   (setq-local flycheck-clang-include-path
+		       (list
+			(concat root "Source/ShooterGame/Public")
+			(concat root "Source/ShooterGame/Public/Actors")
+			(concat root "Source/ShooterGame/Public/AI")))))))
 (custom-set-faces
-    ;; custom-set-faces was added by Custom.
-    ;; If you edit it by hand, you could mess it up, so be careful.
-    ;; Your init file should contain only one such instance.
-    ;; If there is more than one, they won't work right.
-)
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
 
 (defun mati/evil-hook ()
     (dolist (mode '(custom-mode
@@ -345,7 +361,7 @@
     "gF"  'magit-fetch-all
     "gr"  'magit-rebase
 
-    "u" '(ue-command-map :which-key "unreal")
+	"u" '(:ignore true :which-key "utilities")
     
     "f" '(:ignore true :which-key "files")
     "fo" '(find-file :which-key "open")
@@ -391,11 +407,16 @@
 (use-package lsp-mode
 :commands (lsp lsp-deferred)
 :hook ((lsp-mode . mati/lsp-mode-setup)
-	(prog-mode . lsp-mode))
+	   (c-mode . lsp-deferred)
+	   (c++-mode . lsp-deferred)
+	   (prog-mode . lsp-mode))
 :init
 (setq lsp-keymap-prefix "C-l")  ;; Or 'C-l', 's-l'
 :config
-(lsp-enable-which-key-integration t))
+(lsp-enable-which-key-integration t)
+(setq lsp-clients-clangd-args '("--header-insertion=never"
+					    "--completion-style=bundled"
+					    "--background-index")))
 
 (use-package lsp-ui
 :hook (lsp-mode . lsp-ui-mode)
@@ -403,7 +424,10 @@
 (lsp-ui-doc-position 'bottom))
 
 (use-package lsp-treemacs
-:after lsp)
+:after lsp
+:commands (lsp-treemacs-errors-list
+	lsp-treemacs-symbols)
+:config   (lsp-treemacs-sync-mode t))
 
 (use-package lsp-ivy)
 
@@ -432,6 +456,12 @@
 
     ;; Number the candidates (use M-1, M-2 etc to select completions).
     (setq company-show-numbers t))
+
+(use-package yasnippet
+  :config
+  (setq yas-indent-line 'fixed)
+  (yas-reload-all)
+  :hook   (prog-mode . yas-minor-mode))
 
 (use-package evil-nerd-commenter
 :bind ("C-/" . evilnc-comment-or-uncomment-lines))
@@ -484,7 +514,32 @@
 
 (use-package clang-format)
 
-  (use-package ue
+(use-package highlight-doxygen)
+
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+(add-hook
+ 'c++-mode-hook
+ (lambda ()
+   (setq c-default-style "bsd"
+	 c-basic-offset  4
+	 tab-width       4)
+   (c-set-offset 'innamespace 0)
+   (highlight-doxygen-mode t)
+   ;; https://www.emacswiki.org/emacs/ElectricPair
+   (electric-pair-mode t)
+   ;; https://wikemacs.org/wiki/Subword-mode
+   (subword-mode t)
+   (display-line-numbers-mode t)
+   ;; Set the right margin according to Epic Games coding standard
+   (setq-local fill-column 120)
+
+   (evil-local-set-key 'normal (kbd "SPC u u") 'ue-command-map)
+   (evil-local-set-key 'normal (kbd "SPC u f") 'clang-format-buffer)
+   (evil-local-set-key 'normal (kbd "SPC u y") 'company-yasnippet)))
+
+;; (use-package ue
+    ;; :init   (ue-global-mode t))
+(use-package ue
   :straight (ue :type git :host gitlab :repo "unrealemacs/ue.el")
   :init (ue-global-mode))
 

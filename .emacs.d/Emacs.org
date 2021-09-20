@@ -155,6 +155,8 @@
                 eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
+(fset 'yes-or-no-p 'y-or-n-p)
+
 #+end_src
 
 ** Themes
@@ -416,7 +418,7 @@
     "gF"  'magit-fetch-all
     "gr"  'magit-rebase
 
-    "u" '(ue-command-map :which-key "unreal")
+	"u" '(:ignore true :which-key "utilities")
     
     "f" '(:ignore true :which-key "files")
     "fo" '(find-file :which-key "open")
@@ -485,11 +487,16 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 (use-package lsp-mode
 :commands (lsp lsp-deferred)
 :hook ((lsp-mode . mati/lsp-mode-setup)
-	(prog-mode . lsp-mode))
+	   (c-mode . lsp-deferred)
+	   (c++-mode . lsp-deferred)
+	   (prog-mode . lsp-mode))
 :init
 (setq lsp-keymap-prefix "C-l")  ;; Or 'C-l', 's-l'
 :config
-(lsp-enable-which-key-integration t))
+(lsp-enable-which-key-integration t)
+(setq lsp-clients-clangd-args '("--header-insertion=never"
+					    "--completion-style=bundled"
+					    "--background-index")))
 
 #+end_src
 
@@ -519,7 +526,10 @@ This package is built on the [[https://github.com/Alexander-Miller/treemacs][tre
 
 #+begin_src emacs-lisp
 (use-package lsp-treemacs
-:after lsp)
+:after lsp
+:commands (lsp-treemacs-errors-list
+	lsp-treemacs-symbols)
+:config   (lsp-treemacs-sync-mode t))
 
 #+end_src
 
@@ -577,6 +587,16 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
     ;; Number the candidates (use M-1, M-2 etc to select completions).
     (setq company-show-numbers t))
+
+#+end_src
+
+** Yasnippet
+#+begin_src emacs-lisp
+(use-package yasnippet
+  :config
+  (setq yas-indent-line 'fixed)
+  (yas-reload-all)
+  :hook   (prog-mode . yas-minor-mode))
 
 #+end_src
 
@@ -650,14 +670,38 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
 
 (use-package clang-format)
 
+(use-package highlight-doxygen)
+
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+(add-hook
+ 'c++-mode-hook
+ (lambda ()
+   (setq c-default-style "bsd"
+	 c-basic-offset  4
+	 tab-width       4)
+   (c-set-offset 'innamespace 0)
+   (highlight-doxygen-mode t)
+   ;; https://www.emacswiki.org/emacs/ElectricPair
+   (electric-pair-mode t)
+   ;; https://wikemacs.org/wiki/Subword-mode
+   (subword-mode t)
+   (display-line-numbers-mode t)
+   ;; Set the right margin according to Epic Games coding standard
+   (setq-local fill-column 120)
+
+   (evil-local-set-key 'normal (kbd "SPC u u") 'ue-command-map)
+   (evil-local-set-key 'normal (kbd "SPC u f") 'clang-format-buffer)
+   (evil-local-set-key 'normal (kbd "SPC u y") 'company-yasnippet)))
+
 #+end_src
 
 **** Unreal Engine
 #+begin_src emacs-lisp
-  (use-package ue
+  ;; (use-package ue
+    ;; :init   (ue-global-mode t))
+(use-package ue
   :straight (ue :type git :host gitlab :repo "unrealemacs/ue.el")
   :init (ue-global-mode))
-
 
 #+end_src
 
