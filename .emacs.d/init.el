@@ -22,6 +22,15 @@
 (when (not (server-running-p))
     (server-start))
 
+(defun mati/display-startup-time ()
+  (message "Emacs loaded in %s with %d garbage collections."
+           (format "%.2f seconds"
+                   (float-time
+                   (time-subtract after-init-time before-init-time)))
+           gcs-done))
+
+(add-hook 'emacs-startup-hook #'matI/Display-startup-time)
+
 ;; Put backup files neatly away                                                 
 (let ((backup-dir "~/.emacs.d/backups")
       (auto-saves-dir "~/.emacs.d/auto-saves/"))
@@ -308,6 +317,10 @@
     ("0" (text-scale-adjust 0) "normal") 
     ("f" nil "finished" :exit t))
 
+(defun mati/open-config ()
+    (interactive)
+    (find-file (expand-file-name "~/.emacs.d/Emacs.org")))
+
 (mati/leader-keys
     "q" '(org-capture :which-key "capture")
     "a" '(:ingore true :which-key "agenda")
@@ -344,10 +357,11 @@
     "gF"  'magit-fetch-all
     "gr"  'magit-rebase
 
-	"u" '(:ignore true :which-key "utilities")
+    "u" '(:ignore true :which-key "utilities")
     
     "f" '(:ignore true :which-key "files")
     "fo" '(find-file :which-key "open")
+    "fc" '(mati/open-config :which-key "config")
 
     ":" '(eval-expression :which-key "eval")
     "s" '(shell :which-key "shell")
