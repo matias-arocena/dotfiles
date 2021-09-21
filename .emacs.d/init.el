@@ -8,9 +8,8 @@
 (when (eq system-type 'darwin)
   ;; Ensure environment  variables inside Emacs look  the same as in  the user's
   ;; shell.
-  (toggle-frame-maximized)
-)
-
+    (toggle-frame-maximized)
+    (setq projectile-enable-caching t))
 ;;; Windows
 (when (eq system-type 'windows-nt)
   ;; Add Windows specific stuff here
@@ -29,7 +28,7 @@
                    (time-subtract after-init-time before-init-time)))
            gcs-done))
 
-(add-hook 'emacs-startup-hook #'matI/Display-startup-time)
+(add-hook 'emacs-startup-hook #'mati/display-startup-time)
 
 ;; Put backup files neatly away                                                 
 (let ((backup-dir "~/.emacs.d/backups")
@@ -133,6 +132,12 @@
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 (fset 'yes-or-no-p 'y-or-n-p)
+
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns x))
+  :config
+  (setq exec-path-from-shell-variables '("PATH" "GOPATH"))
+  (exec-path-from-shell-initialize))
 
 (pcase system-type
     ((or 'gnu/linux 'windows-nt 'cygwin)
@@ -295,7 +300,6 @@
 	(evil-set-initial-state 'messages-buffer-mode 'normal)
 	(evil-set-initial-state 'dashboard-mode 'normal))
 
-
 (use-package evil-collection
     :after evil
     :config (evil-collection-init))
@@ -370,7 +374,6 @@
     "m" '(:ignore true :which-key "M-x")
     "x" '(:ignore true :which-key "C-x"))
 
-
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 (global-unset-key (kbd "C-x C-b"))
@@ -398,8 +401,8 @@
 (use-package magit)
 
 (defun mati/lsp-mode-setup ()
-(setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-(lsp-headerline-breadcrumb-mode))
+    (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+    (lsp-headerline-breadcrumb-mode))
 
 (use-package lsp-mode
 :commands (lsp lsp-deferred)

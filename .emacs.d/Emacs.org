@@ -13,9 +13,8 @@
 (when (eq system-type 'darwin)
   ;; Ensure environment  variables inside Emacs look  the same as in  the user's
   ;; shell.
-  (toggle-frame-maximized)
-)
-
+    (toggle-frame-maximized)
+    (setq projectile-enable-caching t))
 ;;; Windows
 (when (eq system-type 'windows-nt)
   ;; Add Windows specific stuff here
@@ -41,7 +40,7 @@
                    (time-subtract after-init-time before-init-time)))
            gcs-done))
 
-(add-hook 'emacs-startup-hook #'matI/Display-startup-time)
+(add-hook 'emacs-startup-hook #'mati/display-startup-time)
 
 #+end_src
 
@@ -167,6 +166,16 @@
 
 #+end_src
 
+** OSx ENV
+#+begin_src emacs-lisp
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns x))
+  :config
+  (setq exec-path-from-shell-variables '("PATH" "GOPATH"))
+  (exec-path-from-shell-initialize))
+
+#+end_src
+
 ** Themes
 #+begin_src emacs-lisp
 (pcase system-type
@@ -196,6 +205,7 @@
     :diminish which-key-mode
     :config
 	(setq which-key-idle-delay 0.3))
+
 #+end_src
 
 ** Ivy and Counsel
@@ -241,7 +251,6 @@
     :init
 	(ivy-rich-mode 1))
 
-
 #+end_src
 
 ** Better Modeline
@@ -266,6 +275,7 @@
 	([remap describe-variable] . counsel-describe-variable)
 	([remap describe-command] . helpful-command)
 	([remap describe-key] . helpful-key))
+
 #+end_src
 
 * Keyboard
@@ -279,7 +289,6 @@
 	    :prefix "SPC"
 	    :global-prefix"C-SPC"))
 	   
-
 #+end_src
   
 
@@ -359,7 +368,6 @@
 
 	(evil-set-initial-state 'messages-buffer-mode 'normal)
 	(evil-set-initial-state 'dashboard-mode 'normal))
-
 
 (use-package evil-collection
     :after evil
@@ -443,7 +451,6 @@
     "m" '(:ignore true :which-key "M-x")
     "x" '(:ignore true :which-key "C-x"))
 
-
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 (global-unset-key (kbd "C-x C-b"))
@@ -492,10 +499,9 @@ The =lsp-keymap-prefix= setting enables you to define a prefix for where =lsp-mo
 The =which-key= integration adds helpful descriptions of the various keys so you should be able to learn a lot just by pressing =C-c l= in a =lsp-mode= buffer and trying different things that you find there.
 
 #+begin_src emacs-lisp
-
 (defun mati/lsp-mode-setup ()
-(setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-(lsp-headerline-breadcrumb-mode))
+    (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+    (lsp-headerline-breadcrumb-mode))
 
 (use-package lsp-mode
 :commands (lsp lsp-deferred)
@@ -721,7 +727,6 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
 
 ** Golang
 #+begin_src emacs-lisp
-
 ;;Goimports
 (defun go-mode-setup ()
   (go-eldoc-setup)
