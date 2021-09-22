@@ -297,6 +297,10 @@
 	(evil-global-set-key 'motion "j" 'evil-next-visual-line)
 	(evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
+
+	(evil-ex-define-cmd "q" 'kill-this-buffer)
+	(evil-ex-define-cmd "qa" 'evil-quit)
+
 	(evil-set-initial-state 'messages-buffer-mode 'normal)
 	(evil-set-initial-state 'dashboard-mode 'normal))
 
@@ -365,6 +369,8 @@
     
     "f" '(:ignore true :which-key "files")
     "fo" '(find-file :which-key "open")
+    "." '(find-file :which-key "open file")
+    "fd" '(dired :which-key "directory")
     "fc" '(mati/open-config :which-key "config")
 
     ":" '(eval-expression :which-key "eval")
@@ -373,6 +379,13 @@
     "c" '(:ignore true :which-key "C-c")
     "m" '(:ignore true :which-key "M-x")
     "x" '(:ignore true :which-key "C-x"))
+
+(general-define-key
+:keymaps '(normal insert visual emacs)
+:prefix "SPC"
+:global-pefix "C-SPC"
+:predicate 'lsp-mode
+"l" '(:ignore true :which-key "lsp"))
 
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
@@ -400,24 +413,23 @@
 
 (use-package magit)
 
-(defun mati/lsp-mode-setup ()
-    (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-    (lsp-headerline-breadcrumb-mode))
+  (defun mati/lsp-mode-setup ()
+      (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+      (lsp-headerline-breadcrumb-mode))
 
-(use-package lsp-mode
-:commands (lsp lsp-deferred)
-:hook ((lsp-mode . mati/lsp-mode-setup)
-	   (c-mode . lsp-deferred)
-	   (c++-mode . lsp-deferred)
-	   (go-mode . lsp-deferred)
-	   (prog-mode . lsp-mode))
-:init
-(setq lsp-keymap-prefix "C-l")  ;; Or 'C-l', 's-l'
-:config
-(lsp-enable-which-key-integration t)
-(setq lsp-clients-clangd-args '("--header-insertion=never"
-				"--completion-style=bundled"
-				"--background-index")))
+  (use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :hook ((lsp-mode . mati/lsp-mode-setup)
+	     (c-mode . lsp-deferred)
+	     (c++-mode . lsp-deferred)
+	     (go-mode . lsp-deferred)
+	     (prog-mode . lsp-mode))
+  :config
+  (evil-define-key 'normal lsp-mode-map (kbd "SPC l") lsp-command-map)
+  (lsp-enable-which-key-integration t)
+  (setq lsp-clients-clangd-args '("--header-insertion=never"
+				  "--completion-style=bundled"
+				  "--background-index")))
 
 (use-package lsp-ui
 :hook (lsp-mode . lsp-ui-mode)
@@ -428,7 +440,8 @@
 :after lsp
 :commands (lsp-treemacs-errors-list
 	lsp-treemacs-symbols)
-:config   (lsp-treemacs-sync-mode t))
+:config
+    (lsp-treemacs-sync-mode t))
 
 (use-package lsp-ivy)
 
@@ -446,17 +459,6 @@
 
 (use-package flycheck
   :init   (global-flycheck-mode t))
-
-(use-package company-tabnine
-:after company
-:config
-    (add-to-list 'company-backends #'company-tabnine)
-
-    ;; Trigger completion immediately.
-    (setq company-idle-delay 0.4)
-
-    ;; Number the candidates (use M-1, M-2 etc to select completions).
-    (setq company-show-numbers t))
 
 (use-package yasnippet
   :config
