@@ -287,11 +287,13 @@
 	(define-key evil-normal-state-map (kbd "SPC x") (general-simulate-key "C-x"))
 	(define-key evil-normal-state-map (kbd "SPC c") (general-simulate-key "C-c"))
 	(define-key evil-normal-state-map (kbd "SPC m") (general-simulate-key "M-x"))
+	(define-key evil-normal-state-map (kbd "SPC w") (general-simulate-key "C-w"))
 	
 	(define-key evil-insert-state-map (kbd "C-SPC h") (general-simulate-key "C-h"))
 	(define-key evil-insert-state-map (kbd "C-SPC x") (general-simulate-key "C-x"))
 	(define-key evil-insert-state-map (kbd "C-SPC c") (general-simulate-key "C-c"))
 	(define-key evil-insert-state-map (kbd "C-SPC m") (general-simulate-key "M-x"))
+	(define-key evil-insert-state-map (kbd "C-SPC w") (general-simulate-key "C-W"))
 	
 	;; Use visual line motions even outside of visual-line-mode buffers
 	(evil-global-set-key 'motion "j" 'evil-next-visual-line)
@@ -377,6 +379,7 @@
     "s" '(shell :which-key "shell")
     "h" '(:ignore true :which-key "help")
     "c" '(:ignore true :which-key "C-c")
+    "w" '(:ignore true :which-key "window")
     "m" '(:ignore true :which-key "M-x")
     "x" '(:ignore true :which-key "C-x"))
 
