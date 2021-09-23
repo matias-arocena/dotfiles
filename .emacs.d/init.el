@@ -423,10 +423,10 @@
   (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :hook ((lsp-mode . mati/lsp-mode-setup)
-	     (c-mode . lsp-deferred)
-	     (c++-mode . lsp-deferred)
-	     (go-mode . lsp-deferred)
-	     (prog-mode . lsp-mode))
+	(c-mode . lsp-deferred)
+	(c++-mode . lsp-deferred)
+	(go-mode . lsp-deferred)
+	(prog-mode . lsp-mode))
   :config
   (evil-define-key 'normal lsp-mode-map (kbd "SPC l") lsp-command-map)
   (lsp-enable-which-key-integration t)
@@ -551,7 +551,7 @@
 
 ;;Goimports
 (defun go-mode-setup ()
-  (go-eldoc-setup)
+  ;(go-eldoc-setup)
   (add-hook 'before-save-hook 'gofmt-before-save) 
   (setq gofmt-command "goimports"))
 
