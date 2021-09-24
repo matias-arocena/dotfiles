@@ -352,6 +352,7 @@
     "pF"  'consult-ripgrep
     "pc"  'projectile-compile-project
     "pd"  'projectile-dired 
+    "pn"  '(projectile-add-known-project :which-key "new project") 
 
     "g"   '(:ignore t :which-key "git")
     "gs"  'magit-status
