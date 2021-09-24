@@ -383,12 +383,12 @@
     "m" '(:ignore true :which-key "M-x")
     "x" '(:ignore true :which-key "C-x"))
 
-(general-define-key
-:keymaps '(normal insert visual emacs)
-:prefix "SPC"
-:global-pefix "C-SPC"
-:predicate 'lsp-mode
-"l" '(:ignore true :which-key "lsp"))
+;(general-define-key
+;:keymaps '(normal insert visual emacs)
+;:prefix "SPC"
+;:global-pefix "C-SPC"
+;:predicate 'lsp-mode
+;"l" '(:ignore true :which-key "lsp"))
 
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
@@ -417,8 +417,10 @@
 (use-package magit)
 
   (defun mati/lsp-mode-setup ()
-      (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-      (lsp-headerline-breadcrumb-mode))
+    (define-key evil-normal-state-map (kbd "SPC l") (general-simulate-key "C-l"))
+    (define-key evil-insert-state-map (kbd "C-SPC l") (general-simulate-key "C-l"))
+    (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+    (lsp-headerline-breadcrumb-mode))
 
   (use-package lsp-mode
   :commands (lsp lsp-deferred)
@@ -427,8 +429,9 @@
 	(c++-mode . lsp-deferred)
 	(go-mode . lsp-deferred)
 	(prog-mode . lsp-mode))
+  :init
+    (setq lsp-keymap-prefix "C-l")  ;; Or 'C-l', 's-l'
   :config
-  (evil-define-key 'normal lsp-mode-map (kbd "SPC l") lsp-command-map)
   (lsp-enable-which-key-integration t)
   (setq lsp-clients-clangd-args '("--header-insertion=never"
 				  "--completion-style=bundled"
@@ -451,8 +454,8 @@
 (use-package company
 :after lsp-mode
 :hook (lsp-mode . company-mode)
-:bind (:map company-active-map ("C-SPC" . company-complete-selection))
-    (:map lsp-mode-map ("C-SPC" . company-indent-or-complete-common))
+:bind (:map company-active-map ("C-TAB" . company-complete-selection))
+    (:map lsp-mode-map ("C-TAB" . company-indent-or-complete-common))
 :custom
 (company-minimum-prefix-length 1)
 (company-idle-delay 0.0))
