@@ -220,6 +220,14 @@
 	([remap describe-command] . helpful-command)
 	([remap describe-key] . helpful-key))
 
+(use-package treemacs)
+
+(use-package treemacs-evil
+  :after evil)
+
+(use-package treemacs-projectile
+  :after projectile)
+
 (use-package general
     :config
 	(general-evil-setup t)

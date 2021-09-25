@@ -132,7 +132,7 @@
 
 #+end_src
 
-* UI Configuration
+* UX Configuration
 #+begin_src emacs-lisp 
 ;; Thanks, but no thanks
 (setq inhibit-startup-message t)
@@ -276,6 +276,23 @@
 	([remap describe-command] . helpful-command)
 	([remap describe-key] . helpful-key))
 
+#+end_src
+
+** Treemacs
+#+begin_src emacs-lisp
+(use-package treemacs)
+#+end_src
+
+*** Treemacs Evil
+#+begin_src emacs-lisp
+(use-package treemacs-evil
+  :after evil)
+#+end_src
+
+*** Treemacs Projectile
+#+begin_src emacs-lisp
+(use-package treemacs-projectile
+  :after projectile)
 #+end_src
 
 * Keyboard
