@@ -140,7 +140,7 @@
   (exec-path-from-shell-initialize))
 
 (pcase system-type
-    ((or 'gnu/linux 'windows-nt 'cygwin)
+    ((or 'windows-nt 'cygwin)
 	(set-face-attribute 'default nil
 			:font "JetBrains Mono"
 			:weight 'light
@@ -344,6 +344,8 @@
     "a" '(:ingore true :which-key "agenda")
     "aa" '(org-agenda-list :which-key "agenda")
     "ad" '(org-agenda :which-key "dashboard")
+    "df" '(org-roam-node-find :which-key "find node")
+    "dn" '(org-roam-node-insert :which-key "insert node")
 
     "b" '(:ignore t :which-key "buffer")
     "bi" '(ibuffer :which-key "ibuffer")
@@ -353,6 +355,7 @@
     "t" '(:ignore t :which-key "toggles")
     "tt" '(treemacs :which-key "browse dir tree")
     "ts" '(hydra-text-scale/body :which-key "scale text")
+    "tr" '(org-roam-buffer-toggle :which-key "roam buffer")
 
     "p" '(:ignore t :which-key "project") 
     "pf"  'projectile-find-file
@@ -652,3 +655,15 @@
     (org-babel-tangle))))
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'mati/org-babel-tangle-config)))
+
+(use-package org-roam
+  :ensure t
+  :init
+  (setq org-roam-v2-ack t)
+  :custom
+  (org-roam-directory "~/org")
+  (org-roam-completion-everywhere t)
+  :bind (         :map org-mode-map
+         ("C-M-i"    . completion-at-point))
+  :config
+  (org-roam-setup))
