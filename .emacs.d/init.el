@@ -710,3 +710,11 @@
              (lambda ()
                (when (equal org-state "DONE")
                  (mati/org-roam-copy-todo-to-today))))
+
+(setq erc-server "irc.libera.chat"
+      erc-nick "enki97"    ; Change this!
+      erc-user-full-name "Mati A"  ; And this!
+      erc-track-shorten-start 8
+      erc-autojoin-channels-alist '(("irc.libera.chat" "#systemcrafters" "#emacs"))
+	erc-kill-buffer-on-part t
+	erc-auto-query 'bury)

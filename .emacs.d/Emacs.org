@@ -934,6 +934,29 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
                (when (equal org-state "DONE")
                  (mati/org-roam-copy-todo-to-today))))
 #+end_src
+
+* Chat
+** IRC
+#+begin_src emacs-lisp
+(setq erc-server "irc.libera.chat"
+      erc-nick "enki97"    ; Change this!
+      erc-user-full-name "Mati A"  ; And this!
+      erc-track-shorten-start 8
+      erc-autojoin-channels-alist '(("irc.libera.chat" "#systemcrafters" "#emacs"))
+	erc-kill-buffer-on-part t
+	erc-auto-query 'bury)
+
+#+end_src
+
+** Telegram
+#+begin_src emacs-lisp
+(use-package telega)
+
+#+end_src
+
+*** TODO Install clients for Telegram, Matrix and discord
+
+
 * Applications
 ** Some App
 
