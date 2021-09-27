@@ -431,7 +431,8 @@
     "aa" '(org-agenda-list :which-key "agenda")
     "ad" '(org-agenda :which-key "dashboard")
     "df" '(org-roam-node-find :which-key "find node")
-    "dn" '(org-roam-node-insert :which-key "insert node")
+    "di" '(org-roam-node-insert :which-key "insert node")
+    "dd" '(org-roam-dailies-map :which-key "daily")
 
     "b" '(:ignore t :which-key "buffer")
     "bi" '(ibuffer :which-key "ibuffer")
@@ -793,7 +794,7 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
     (setq org-habit-graph-column 60)
 
     (setq org-capture-templates
-	`(("t" "Tasks / Projects")
+      `(("t" "Tasks / Projects")
 	("tt" "Task" entry (file+olp "~/org/todo.org" "Inbox")
 		"* TODO %?\n  SCHEDULED: %U\n  %a\n  %i" :empty-lines 1)
 
@@ -804,12 +805,11 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
 		;; ,(dw/read-file-as-string "~/Notes/Templates/Daily.org")
 		:clock-in :clock-resume
 		:empty-lines 1)
-	("jm" "notes" entry
+	("jn" "notes" entry
 		(file+olp+datetree "~/org/notes.org")
 		"* %<%I:%M %p> - %a :notes:\n\n%?\n\n"
 		:clock-in :clock-resume
 		:empty-lines 1)
-
 	("m" "Metrics Capture")
 	("mw" "Weight" table-line
 	    (file+headline "~/org/gym.org" "Weight")
@@ -825,8 +825,7 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
 		(lambda (&rest _)
 		    (org-save-all-org-buffers)))
 
-
-
+    (setq org-support-shift-select t)
     (setq org-todo-keywords
 	    '((sequence "TODO(t)" "SOMEDAY(s)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
     ;; Configure custom agenda views
@@ -882,12 +881,59 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
   :custom
   (org-roam-directory "~/org")
   (org-roam-completion-everywhere t)
-  :bind (         :map org-mode-map
-         ("C-M-i"    . completion-at-point))
+  (org-roam-capture-templates
+   '(("d" "default" plain
+      "%?"
+      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+      :unnarrowed t)
+     ("b" "book notes" plain
+     "\n* Source\n\nAuthor: %^{Author}\nTitle: ${title}\nYear: %^{Year}\n\n* Summary\n\n%?"
+     :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+     :unnarrowed t)
+     ("p" "project" plain "* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks\n\n* Dates\n\n"
+	:if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: Project")
+	:unnarrowed t)))
+  (org-roam-dailies-capture-templates
+    '(("d" "default" entry "* %<%I:%M %p>: %?"
+       :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
+  :bind (:map org-mode-map
+        ("C-TAB"  . completion-at-point)
+	:map org-roam-dailies-map
+	("Y" . org-roam-dailies-capture-yesterday)
+        ("T" . org-roam-dailies-capture-tomorrow))
   :config
-  (org-roam-setup))
+    (require 'org-roam-dailies) ;; Ensure the keymap is available
+    (org-roam-db-autosync-mode)
+    (org-roam-setup))
+
 #+end_src
-   
+
+*** Move completed tasks to dailies
+#+begin_src emacs-lisp
+(defun mati/org-roam-copy-todo-to-today ()
+  (interactive)
+  (let ((org-refile-keep t) ;; Set this to nil to delete the original!
+        (org-roam-dailies-capture-templates
+          '(("t" "tasks" entry "%?"
+             :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
+        (org-after-refile-insert-hook #'save-buffer)
+        today-file
+        pos)
+    (save-window-excursion
+      (org-roam-dailies--capture (current-time) t)
+      (setq today-file (buffer-file-name))
+      (setq pos (point)))
+
+    ;; Only refile if the target file is different than the current file
+    (unless (equal (file-truename today-file)
+                   (file-truename (buffer-file-name)))
+      (org-refile nil nil (list "Tasks" today-file nil pos)))))
+
+(add-to-list 'org-after-todo-state-change-hook
+             (lambda ()
+               (when (equal org-state "DONE")
+                 (mati/org-roam-copy-todo-to-today))))
+#+end_src
 * Applications
 ** Some App
 
