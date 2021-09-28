@@ -429,11 +429,11 @@
 
 (use-package magit)
 
-  (defun mati/lsp-mode-setup ()
-    (define-key evil-normal-state-map (kbd "SPC l") (general-simulate-key "C-l"))
-    (define-key evil-insert-state-map (kbd "C-SPC l") (general-simulate-key "C-l"))
-    (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-    (lsp-headerline-breadcrumb-mode))
+(defun mati/lsp-mode-setup ()
+(define-key evil-normal-state-map (kbd "SPC l") (general-simulate-key "C-l"))
+(define-key evil-insert-state-map (kbd "C-SPC l") (general-simulate-key "C-l"))
+(setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+(lsp-headerline-breadcrumb-mode))
 
   (use-package lsp-mode
   :commands (lsp lsp-deferred)
@@ -441,14 +441,14 @@
 	(c-mode . lsp-deferred)
 	(c++-mode . lsp-deferred)
 	(go-mode . lsp-deferred)
-	(prog-mode . lsp-mode))
+	(prog-mode . lsp-mode)
   :init
     (setq lsp-keymap-prefix "C-l")  ;; Or 'C-l', 's-l'
   :config
   (lsp-enable-which-key-integration t)
   (setq lsp-clients-clangd-args '("--header-insertion=never"
 				  "--completion-style=bundled"
-				  "--background-index")))
+				  "--background-index"))))
 
 (use-package lsp-ui
 :hook (lsp-mode . lsp-ui-mode)
@@ -463,6 +463,8 @@
     (lsp-treemacs-sync-mode t))
 
 (use-package lsp-ivy)
+
+(add-hook 'prog-mode-hook #'hs-minor-mode)
 
 (use-package company
 :after lsp-mode
@@ -718,3 +720,5 @@
       erc-autojoin-channels-alist '(("irc.libera.chat" "#systemcrafters" "#emacs"))
 	erc-kill-buffer-on-part t
 	erc-auto-query 'bury)
+
+(use-package telega)

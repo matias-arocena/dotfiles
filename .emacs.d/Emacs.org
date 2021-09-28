@@ -537,27 +537,27 @@ The =lsp-keymap-prefix= setting enables you to define a prefix for where =lsp-mo
 The =which-key= integration adds helpful descriptions of the various keys so you should be able to learn a lot just by pressing =C-c l= in a =lsp-mode= buffer and trying different things that you find there.
 
 #+begin_src emacs-lisp
-  (defun mati/lsp-mode-setup ()
-    (define-key evil-normal-state-map (kbd "SPC l") (general-simulate-key "C-l"))
-    (define-key evil-insert-state-map (kbd "C-SPC l") (general-simulate-key "C-l"))
-    (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-    (lsp-headerline-breadcrumb-mode))
+(defun mati/lsp-mode-setup ()
+(define-key evil-normal-state-map (kbd "SPC l") (general-simulate-key "C-l"))
+(define-key evil-insert-state-map (kbd "C-SPC l") (general-simulate-key "C-l"))
+(setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+(lsp-headerline-breadcrumb-mode))
 
-  (use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :hook ((lsp-mode . mati/lsp-mode-setup)
-	(c-mode . lsp-deferred)
-	(c++-mode . lsp-deferred)
-	(go-mode . lsp-deferred)
-	(prog-mode . lsp-mode))
-  :init
-    (setq lsp-keymap-prefix "C-l")  ;; Or 'C-l', 's-l'
-  :config
-  (lsp-enable-which-key-integration t)
-  (setq lsp-clients-clangd-args '("--header-insertion=never"
-				  "--completion-style=bundled"
-				  "--background-index")))
-    
+(use-package lsp-mode
+:commands (lsp lsp-deferred)
+:hook ((lsp-mode . mati/lsp-mode-setup)
+    (c-mode . lsp-deferred)
+    (c++-mode . lsp-deferred)
+    (go-mode . lsp-deferred)
+    (prog-mode . lsp-mode)
+:init
+(setq lsp-keymap-prefix "C-l")  ;; Or 'C-l', 's-l'
+:config
+(lsp-enable-which-key-integration t)
+(setq lsp-clients-clangd-args '("--header-insertion=never"
+				"--completion-style=bundled"
+				"--background-index"))))
+
 #+end_src
 
 *** lsp-ui
@@ -608,6 +608,10 @@ Try these commands with =M-x=:
 
 #+end_src
 
+** Folding
+#+begin_src emacs-lisp
+(add-hook 'prog-mode-hook #'hs-minor-mode)
+#+end_src
 ** Company Mode
 
 [[http://company-mode.github.io/][Company Mode]] provides a nicer in-buffer completion interface than =completion-at-point= which is more reminiscent of what you would expect from an IDE.  We add a simple configuration to make the keybindings a little more useful (=TAB= now completes the selection and initiates completion at the current location if needed).
