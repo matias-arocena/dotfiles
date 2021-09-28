@@ -549,14 +549,14 @@ The =which-key= integration adds helpful descriptions of the various keys so you
     (c-mode . lsp-deferred)
     (c++-mode . lsp-deferred)
     (go-mode . lsp-deferred)
-    (prog-mode . lsp-mode)
+    (prog-mode . lsp-mode))
 :init
 (setq lsp-keymap-prefix "C-l")  ;; Or 'C-l', 's-l'
 :config
 (lsp-enable-which-key-integration t)
 (setq lsp-clients-clangd-args '("--header-insertion=never"
 				"--completion-style=bundled"
-				"--background-index"))))
+				"--background-index")))
 
 #+end_src
 

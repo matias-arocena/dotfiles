@@ -435,20 +435,20 @@
 (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
 (lsp-headerline-breadcrumb-mode))
 
-  (use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :hook ((lsp-mode . mati/lsp-mode-setup)
-	(c-mode . lsp-deferred)
-	(c++-mode . lsp-deferred)
-	(go-mode . lsp-deferred)
-	(prog-mode . lsp-mode)
-  :init
-    (setq lsp-keymap-prefix "C-l")  ;; Or 'C-l', 's-l'
-  :config
-  (lsp-enable-which-key-integration t)
-  (setq lsp-clients-clangd-args '("--header-insertion=never"
-				  "--completion-style=bundled"
-				  "--background-index"))))
+(use-package lsp-mode
+:commands (lsp lsp-deferred)
+:hook ((lsp-mode . mati/lsp-mode-setup)
+    (c-mode . lsp-deferred)
+    (c++-mode . lsp-deferred)
+    (go-mode . lsp-deferred)
+    (prog-mode . lsp-mode))
+:init
+(setq lsp-keymap-prefix "C-l")  ;; Or 'C-l', 's-l'
+:config
+(lsp-enable-which-key-integration t)
+(setq lsp-clients-clangd-args '("--header-insertion=never"
+				"--completion-style=bundled"
+				"--background-index")))
 
 (use-package lsp-ui
 :hook (lsp-mode . lsp-ui-mode)
