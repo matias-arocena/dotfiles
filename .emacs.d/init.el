@@ -577,6 +577,13 @@
   :hook (go-mode . go-mode-setup))
 
 (use-package org
+:bind (:map org-mode-map
+	    ("C-c c" . org-ctrl-c-ctrl-c)
+	    ("C-c t" . org-todo)
+	    ("C-c d" . org-deadline)
+	    ("C-c s" . org-schedule)
+	    ("C-c w" . org-refile)
+	    ("C-c a" . org-attach))
 :config
     (setq org-agenda-files '("~/org/todo.org"
 			    "~/org/contacts.org"))
