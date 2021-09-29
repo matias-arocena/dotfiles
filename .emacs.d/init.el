@@ -167,14 +167,13 @@
 
 (use-package ivy
     :diminish
-    :bind (("C-s" . swiper)
-	:map ivy-minibuffer-map
+    :bind (:map ivy-minibuffer-map
 	    ("TAB" . ivy-alt-done)
 	    ("C-f" . ivy-alt-done)
 	    ("C-l" . ivy-alt-done)
 	    ("C-j" . ivy-next-line)
 	    ("C-k" . ivy-previous-line)
-	:map ivy-switch-buffer-map
+	   :map ivy-switch-buffer-map
 	    ("C-k" . ivy-previous-line)
 	    ("C-l" . ivy-done)
 	    ("C-d" . ivy-switch-buffer-kill)
@@ -335,80 +334,81 @@
     ("0" (text-scale-adjust 0) "normal") 
     ("f" nil "finished" :exit t))
 
-(defun mati/open-config ()
-    (interactive)
-    (find-file (expand-file-name "~/.emacs.d/Emacs.org")))
+  (defun mati/open-config ()
+      (interactive)
+      (find-file (expand-file-name "~/.emacs.d/Emacs.org")))
 
-(mati/leader-keys
-    "q" '(org-capture :which-key "capture")
-    "a" '(:ingore true :which-key "agenda")
-    "aa" '(org-agenda-list :which-key "agenda")
-    "ad" '(org-agenda :which-key "dashboard")
-    "df" '(org-roam-node-find :which-key "find node")
-    "di" '(org-roam-node-insert :which-key "insert node")
-    "dd" '(org-roam-dailies-map :which-key "daily")
+  (mati/leader-keys
+      "q" '(org-capture :which-key "capture")
+      "a" '(:ingore true :which-key "agenda")
+      "aa" '(org-agenda-list :which-key "agenda")
+      "ad" '(org-agenda :which-key "dashboard")
+      "df" '(org-roam-node-find :which-key "find node")
+      "di" '(org-roam-node-insert :which-key "insert node")
+      "dt" '(org-roam-dailies-goto-today :which-key "today")
 
-    "b" '(:ignore t :which-key "buffer")
-    "bi" '(ibuffer :which-key "ibuffer")
-    "bk" '(kill-this-buffer :which-key "kill buffer")
-    "bo" '(counsel-ibuffer :which-key "open") 
+      "b" '(:ignore t :which-key "buffer")
+      "bi" '(ibuffer :which-key "ibuffer")
+      "bk" '(kill-this-buffer :which-key "kill buffer")
+      "bo" '(counsel-ibuffer :which-key "open") 
 
-    "t" '(:ignore t :which-key "toggles")
-    "tt" '(treemacs :which-key "browse dir tree")
-    "ts" '(hydra-text-scale/body :which-key "scale text")
-    "tr" '(org-roam-buffer-toggle :which-key "roam buffer")
+      "t" '(:ignore t :which-key "toggles")
+      "tt" '(treemacs :which-key "browse dir tree")
+      "ts" '(hydra-text-scale/body :which-key "scale text")
+      "tr" '(org-roam-buffer-toggle :which-key "roam buffer")
 
-    "p" '(:ignore t :which-key "project") 
-    "pf"  'projectile-find-file
-    "po"  '(projectile-switch-project :which-key "open")
-    "pF"  'consult-ripgrep
-    "pc"  'projectile-compile-project
-    "pd"  'projectile-dired 
-    "pn"  '(projectile-add-known-project :which-key "new project") 
+      "p" '(:ignore t :which-key "project") 
+      "pf"  'projectile-find-file
+      "po"  '(projectile-switch-project :which-key "open")
+      "pF"  'consult-ripgrep
+      "pc"  'projectile-compile-project
+      "pd"  'projectile-dired 
+      "pn"  '(projectile-add-known-project :which-key "new project") 
 
-    "g"   '(:ignore t :which-key "git")
-    "gs"  'magit-status
-    "gd"  'magit-diff-unstaged
-    "gc"  'magit-branch-or-checkout
-    "gl"   '(:ignore t :which-key "log")
-    "glc" 'magit-log-current
-    "glf" 'magit-log-buffer-file
-    "gb"  'magit-branch
-    "gP"  'magit-push-current
-    "gp"  'magit-pull-branch
-    "gf"  'magit-fetch
-    "gF"  'magit-fetch-all
-    "gr"  'magit-rebase
+      "g"   '(:ignore t :which-key "git")
+      "gs"  'magit-status
+      "gd"  'magit-diff-unstaged
+      "gc"  'magit-branch-or-checkout
+      "gl"   '(:ignore t :which-key "log")
+      "glc" 'magit-log-current
+      "glf" 'magit-log-buffer-file
+      "gb"  'magit-branch
+      "gP"  'magit-push-current
+      "gp"  'magit-pull-branch
+      "gf"  'magit-fetch
+      "gF"  'magit-fetch-all
+      "gr"  'magit-rebase
 
-    "u" '(:ignore true :which-key "utilities")
-    
-    "f" '(:ignore true :which-key "files")
-    "fo" '(find-file :which-key "open")
-    "." '(find-file :which-key "open file")
-    "fd" '(dired :which-key "directory")
-    "fc" '(mati/open-config :which-key "config")
+      "u" '(:ignore true :which-key "utilities")
 
-    ":" '(eval-expression :which-key "eval")
-    "s" '(shell :which-key "shell")
-    "h" '(:ignore true :which-key "help")
-    "c" '(:ignore true :which-key "C-c")
-    "w" '(:ignore true :which-key "window")
-    "m" '(:ignore true :which-key "M-x")
-    "x" '(:ignore true :which-key "C-x"))
+      "f" '(:ignore true :which-key "files")
+      "fo" '(find-file :which-key "open")
+      "." '(find-file :which-key "open file")
+      "fd" '(dired :which-key "directory")
+      "fc" '(mati/open-config :which-key "config")
 
-;(general-define-key
-;:keymaps '(normal insert visual emacs)
-;:prefix "SPC"
-;:global-pefix "C-SPC"
-;:predicate 'lsp-mode
-;"l" '(:ignore true :which-key "lsp"))
+      ":" '(eval-expression :which-key "eval")
+      "s" '(shell :which-key "shell")
+      "/"	'(swiper)
+      "h" '(:ignore true :which-key "help")
+      "d" '(:ignore true :which-key "docs")
+      "c" '(:ignore true :which-key "C-c")
+      "w" '(:ignore true :which-key "window")
+      "m" '(:ignore true :which-key "M-x")
+      "x" '(:ignore true :which-key "C-x"))
 
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+  ;; (general-define-key
+  ;;  :keymaps '(org-mode-map)
+  ;;  :prefix "SPC"
+  ;;  :global-prefix "C-SPC"
+  ;;  "dd" '(org-roam-dailies-map))
 
-(global-unset-key (kbd "C-x C-b"))
-(global-unset-key (kbd "C-x C-@"))
-(global-unset-key (kbd "C-x C-<SPC>"))
-(global-unset-key (kbd "C-/"))
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+  (global-unset-key (kbd "C-x C-b"))
+  (global-unset-key (kbd "C-x C-@"))
+  (global-unset-key (kbd "C-x C-<SPC>"))
+  (global-unset-key (kbd "C-/"))
 
 (use-package projectile
     :diminish projectile-mode
@@ -693,32 +693,31 @@
         ("T" . org-roam-dailies-capture-tomorrow))
   :config
     (require 'org-roam-dailies) ;; Ensure the keymap is available
+    (defun mati/org-roam-copy-todo-to-today ()
+    (interactive)
+    (let ((org-refile-keep t) ;; Set this to nil to delete the original!
+	    (org-roam-dailies-capture-templates
+	    '(("t" "tasks" entry "%?"
+		:if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
+	    (org-after-refile-insert-hook #'save-buffer)
+	    today-file
+	    pos)
+	(save-window-excursion
+	(org-roam-dailies--capture (current-time) t)
+	(setq today-file (buffer-file-name))
+	(setq pos (point)))
+
+	;; Only refile if the target file is different than the current file
+	(unless (equal (file-truename today-file)
+		    (file-truename (buffer-file-name)))
+	(org-refile nil nil (list "Tasks" today-file nil pos)))))
+
+    (add-to-list 'org-after-todo-state-change-hook
+		(lambda ()
+		(when (equal org-state "DONE")
+		    (mati/org-roam-copy-todo-to-today))))
     (org-roam-db-autosync-mode)
     (org-roam-setup))
-
-(defun mati/org-roam-copy-todo-to-today ()
-  (interactive)
-  (let ((org-refile-keep t) ;; Set this to nil to delete the original!
-        (org-roam-dailies-capture-templates
-          '(("t" "tasks" entry "%?"
-             :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
-        (org-after-refile-insert-hook #'save-buffer)
-        today-file
-        pos)
-    (save-window-excursion
-      (org-roam-dailies--capture (current-time) t)
-      (setq today-file (buffer-file-name))
-      (setq pos (point)))
-
-    ;; Only refile if the target file is different than the current file
-    (unless (equal (file-truename today-file)
-                   (file-truename (buffer-file-name)))
-      (org-refile nil nil (list "Tasks" today-file nil pos)))))
-
-(add-to-list 'org-after-todo-state-change-hook
-             (lambda ()
-               (when (equal org-state "DONE")
-                 (mati/org-roam-copy-todo-to-today))))
 
 (setq erc-server "irc.libera.chat"
       erc-nick "enki97"    ; Change this!
