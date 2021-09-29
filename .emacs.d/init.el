@@ -389,7 +389,7 @@
 
       ":" '(eval-expression :which-key "eval")
       "s" '(shell :which-key "shell")
-      "/"	'(swiper)
+      "/" 'swiper
       "h" '(:ignore true :which-key "help")
       "d" '(:ignore true :which-key "docs")
       "c" '(:ignore true :which-key "C-c")
