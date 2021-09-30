@@ -726,3 +726,6 @@
 	erc-auto-query 'bury)
 
 (use-package telega)
+
+(use-package elcord
+  :config (elcord-mode))

@@ -958,6 +958,11 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
 (use-package telega)
 
 #+end_src
+** Discord Rich Presence
+#+begin_src emacs-lisp
+(use-package elcord
+  :config (elcord-mode))
+#+end_src
 
 *** TODO Install clients for Telegram, Matrix and discord
 
