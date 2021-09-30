@@ -805,18 +805,16 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
     (setq org-habit-graph-column 60)
 
     (setq org-capture-templates
-      `(("t" "Tasks / Projects")
-	("tt" "Task" entry (file+olp "~/org/todo.org" "Inbox")
+      `(("t" "Task" entry (file+olp "~/org/todo.org" "Inbox")
 		"* TODO %?\n  SCHEDULED: %U\n  %a\n  %i" :empty-lines 1)
 
-	("j" "Journal Entries")
-	("jj" "Journal" entry
+	("j" "Journal" entry
 		(file+olp+datetree "~/org/journal.org")
 		"\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
 		;; ,(dw/read-file-as-string "~/Notes/Templates/Daily.org")
 		:clock-in :clock-resume
 		:empty-lines 1)
-	("jn" "notes" entry
+	("n" "notes" entry
 		(file+olp+datetree "~/org/notes.org")
 		"* %<%I:%M %p> - %a :notes:\n\n%?\n\n"
 		:clock-in :clock-resume
