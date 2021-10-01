@@ -1,26 +1,29 @@
-;;; GNU/Linux
+;;; OS Specific
+;;; - GNU/Linux
 
 (when (eq system-type 'gnu/linux)
   ;; Add GNU/Linux specific stuff here
   )
 
-;;; macOS
+;;; - macOS
 (when (eq system-type 'darwin)
   ;; Ensure environment  variables inside Emacs look  the same as in  the user's
   ;; shell.
     (toggle-frame-maximized)
     (setq projectile-enable-caching t))
-;;; Windows
+;;; - Windows
 (when (eq system-type 'windows-nt)
   ;; Add Windows specific stuff here
     ;; Kudos to Jeffrey Snover: https://docs.microsoft.com/en-us/archive/blogs/dotnetinterop/run-powershell-as-a-shell-within-emacs
     (setq explicit-shell-file-name "powershell.exe")
     (setq explicit-powershell.exe-args '()))
 
+;;; Run Server
 (require 'server)
 (when (not (server-running-p))
     (server-start))
 
+;;; Performance
 (defun mati/display-startup-time ()
   (message "Emacs loaded in %s with %d garbage collections."
            (format "%.2f seconds"
@@ -30,7 +33,7 @@
 
 (add-hook 'emacs-startup-hook #'mati/display-startup-time)
 
-;; Put backup files neatly away                                                 
+;;; Backups and autosave
 (let ((backup-dir "~/.emacs.d/backups")
       (auto-saves-dir "~/.emacs.d/auto-saves/"))
   (dolist (dir (list backup-dir auto-saves-dir))
@@ -48,6 +51,7 @@
       kept-new-versions 5    ; keep some new versions                           
       kept-old-versions 2)   ; and some old ones, too
 
+;;; Package Setup
 ;; Initialize package
 (require 'package)
   
@@ -70,7 +74,7 @@
 
 (setq use-package-always-ensure t)
 
-;; Bootstrap straight.el
+;;; Bootstrap straight.el
 (defvar bootstrap-version)
 (let ((bootstrap-file
     (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -94,6 +98,7 @@
 ;; Load the helper package for commands like `straight-x-clean-unused-repos'
 (require 'straight-x)
 
+;;; Autoupdate
 (use-package auto-package-update
     :custom
     (auto-package-update-interval 7)
@@ -103,7 +108,7 @@
     (auto-package-update-maybe)
     (auto-package-update-at-time "20:00"))
 
-;; Thanks, but no thanks
+;;; UX Configuration
 (setq inhibit-startup-message t)
 
 (scroll-bar-mode -1)        ; Disable visible scrollbar
@@ -133,12 +138,14 @@
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;; OSx ENV
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x))
   :config
   (setq exec-path-from-shell-variables '("PATH" "GOPATH"))
   (exec-path-from-shell-initialize))
 
+;; Themes
 (pcase system-type
     ((or 'windows-nt 'cygwin)
 	(set-face-attribute 'default nil
@@ -155,14 +162,14 @@
 (use-package rainbow-delimiters
     :hook (emacs-lisp-mode . rainbow-delimiters-mode))
 
-;; Shotcut suggestions
+;; Which key - shortcut suggestions
 (use-package which-key
     :init (which-key-mode)
     :diminish which-key-mode
     :config
 	(setq which-key-idle-delay 0.3))
 
-;; Ivy
+;; Ivy and Counsel
 (use-package swiper :ensure t)
 
 (use-package ivy
@@ -202,12 +209,14 @@
     :init
 	(ivy-rich-mode 1))
 
+;; Better Modeline
 (use-package diminish
     :ensure t)
 
 (use-package doom-modeline
     :init (doom-modeline-mode 1)) ; run M-x all-the-icons-install-fonts
 
+;; Helpful Help Commands
 (use-package helpful
     :custom
 	(counsel-describe-function-function #'helpful-callable)
@@ -219,6 +228,7 @@
 	([remap describe-command] . helpful-command)
 	([remap describe-key] . helpful-key))
 
+;; Treemacs
 (use-package treemacs)
 
 (use-package treemacs-evil
@@ -227,6 +237,7 @@
 (use-package treemacs-projectile
   :after projectile)
 
+;;; Keyboard
 (use-package general
     :config
 	(general-evil-setup t)
@@ -235,6 +246,7 @@
 	    :prefix "SPC"
 	    :global-prefix"C-SPC"))
 
+;; OSX Keybindings
 (custom-set-variables
     ;; custom-set-variables was added by Custom.
     ;; If you edit it by hand, you could mess it up, so be careful.
@@ -252,6 +264,7 @@
     ;; If there is more than one, they won't work right.
 )
 
+;; EVIL
 (defun mati/evil-hook ()
     (dolist (mode '(custom-mode
 	    eshell-mode
@@ -325,6 +338,7 @@
     (require 'evil-org-agenda)
     (evil-org-agenda-set-keys))
 
+;; Hydra
 (use-package hydra)
 
 (defhydra hydra-text-scale (:timeout 4)
@@ -334,9 +348,10 @@
     ("0" (text-scale-adjust 0) "normal") 
     ("f" nil "finished" :exit t))
 
+;; Custom Keybindings
   (defun mati/open-config ()
       (interactive)
-      (find-file (expand-file-name "~/.emacs.d/Emacs.org")))
+      (find-file (expand-file-name "~/.emacs.d/init.el")))
 
   (mati/leader-keys
       "q" '(org-capture :which-key "capture")
@@ -410,9 +425,12 @@
   (global-unset-key (kbd "C-x C-<SPC>"))
   (global-unset-key (kbd "C-/"))
 
+;;; Development
+;; Drag Stuff
 (use-package drag-stuff
   :config (drag-stuff-global-mode))
 
+;; Projectile
 (use-package projectile
     :diminish projectile-mode
     :config (projectile-mode)
@@ -430,8 +448,10 @@
     :config
     (counsel-projectile-mode))
 
+;; Magit
 (use-package magit)
 
+;; lsp-mode
 (defun mati/lsp-mode-setup ()
 (define-key evil-normal-state-map (kbd "SPC l") (general-simulate-key "C-l"))
 (define-key evil-insert-state-map (kbd "C-SPC l") (general-simulate-key "C-l"))
@@ -467,8 +487,10 @@
 
 (use-package lsp-ivy)
 
+;; Folding
 (add-hook 'prog-mode-hook #'hs-minor-mode)
 
+;; Company Mode
 (use-package company
 :after lsp-mode
 :hook (lsp-mode . company-mode)
@@ -481,18 +503,22 @@
 (use-package company-box
 :hook (company-mode . company-box-mode))
 
+;; Flycheck
 (use-package flycheck
   :init   (global-flycheck-mode t))
 
+;; Yasnippet
 (use-package yasnippet
   :config
   (setq yas-indent-line 'fixed)
   (yas-reload-all)
   :hook   (prog-mode . yas-minor-mode))
 
+;; Commenting
 (use-package evil-nerd-commenter
 :bind ("C-/" . evilnc-comment-or-uncomment-lines))
 
+;; Shell Config
 (use-package xterm-color
   :straight (xterm-coloer :type git :host github :repo "atomontage/xterm-color"))
 
@@ -509,6 +535,7 @@
             (setq font-lock-function (lambda (_) nil))
             (add-hook 'comint-preoutput-filter-functions 'xterm-color-filter nil t)))
 
+;; Debug
 (use-package dap-mode
   ;; Uncomment the config below if you want all UI panes to be hidden by default!
   ;; :custom
@@ -536,6 +563,8 @@
     :prefix lsp-keymap-prefix
     "d" '(dap-hydra t :wk "debugger")))
 
+;;; Languages
+;; C++
 (use-package modern-cpp-font-lock
 :config (modern-c++-font-lock-global-mode t))
 
@@ -564,12 +593,14 @@
    (evil-local-set-key 'normal (kbd "SPC u f") 'clang-format-buffer)
    (evil-local-set-key 'normal (kbd "SPC u y") 'company-yasnippet)))
 
+;; Unreal Engine
   ;; (use-package ue
     ;; :init   (ue-global-mode t))
 (use-package ue
   :straight (ue :type git :host gitlab :repo "unrealemacs/ue.el")
   :init (ue-global-mode))
 
+;; Golang
 ;;Goimports
 (defun go-mode-setup ()
   ;(go-eldoc-setup)
@@ -579,6 +610,7 @@
 (use-package go-mode
   :hook (go-mode . go-mode-setup))
 
+;;; ORG mode
 (use-package org
 :bind (:map org-mode-map
 	    ("C-c c" . org-ctrl-c-ctrl-c)
@@ -720,6 +752,8 @@
     (org-roam-db-autosync-mode)
     (org-roam-setup))
 
+;;; Chat
+;; IRC
 (setq erc-server "irc.libera.chat"
       erc-nick "enki97"    ; Change this!
       erc-user-full-name "Mati A"  ; And this!
@@ -728,7 +762,5 @@
 	erc-kill-buffer-on-part t
 	erc-auto-query 'bury)
 
+;; Telegram
 (use-package telega)
-
-(use-package elcord
-  :config (elcord-mode))
