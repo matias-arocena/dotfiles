@@ -442,6 +442,9 @@
 
 ;; Drag Stuff
 (use-package drag-stuff
+  :bind (:map drag-stuff-mode-map
+              ("M-<up>" . 'drag-stuff-up)
+              ("M-<down>" . 'drag-stuff-down))
   :config (drag-stuff-global-mode))
 
 ;; Projectile
