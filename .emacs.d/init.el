@@ -435,6 +435,11 @@
   (global-unset-key (kbd "C-/"))
 
 ;;; Development
+;; Tabs are Evil
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
+(setq indent-line-function 'insert-tab)
+
 ;; Drag Stuff
 (use-package drag-stuff
   :config (drag-stuff-global-mode))
