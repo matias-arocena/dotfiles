@@ -232,8 +232,13 @@
 (use-package treemacs)
 
 (use-package treemacs-evil
-  :after evil)
-
+  :after evil
+  :bind (:map treemacs-mode-map
+	      ("zc" . 'treemacs-COLLAPSE-action)
+	      ("za" . 'treemacs-COLLAPSE-action)
+	      ("zo" . 'treemacs-COLLAPSE-action)
+	      ("SPC w" . 'evil-window-map)))
+  
 (use-package treemacs-projectile
   :after projectile)
 
@@ -302,6 +307,8 @@
     :config
 	(add-hook 'evil-mode-hook 'mati/evil-hook)
 	(evil-mode 1)
+
+        (define-key evil-motion-state-map (kbd "SPC") nil)
 	
 	(define-key evil-normal-state-map (kbd "SPC h") (general-simulate-key "C-h"))
 	(define-key evil-normal-state-map (kbd "SPC x") (general-simulate-key "C-x"))
