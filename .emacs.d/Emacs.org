@@ -499,6 +499,12 @@
 #+end_src
 
 * Development
+** Drag Stuff
+#+begin_src emacs-lisp
+(use-package drag-stuff
+  :config (drag-stuff-global-mode))
+#+end_src
+
 ** Projectile
 #+begin_src emacs-lisp
 (use-package projectile

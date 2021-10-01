@@ -410,6 +410,9 @@
   (global-unset-key (kbd "C-x C-<SPC>"))
   (global-unset-key (kbd "C-/"))
 
+(use-package drag-stuff
+  :config (drag-stuff-global-mode))
+
 (use-package projectile
     :diminish projectile-mode
     :config (projectile-mode)
