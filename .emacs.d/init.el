@@ -383,16 +383,18 @@
       "g"   '(:ignore t :which-key "git")
       "gs"  'magit-status
       "gd"  'magit-diff-unstaged
-      "gc"  'magit-branch-or-checkout
+      "gb"  'magit-branch-or-checkout
       "gl"   '(:ignore t :which-key "log")
       "glc" 'magit-log-current
       "glf" 'magit-log-buffer-file
+      "glb" 'magit-blame
       "gb"  'magit-branch
       "gP"  'magit-push-current
       "gp"  'magit-pull-branch
       "gf"  'magit-fetch
       "gF"  'magit-fetch-all
       "gr"  'magit-rebase
+      "gc"  'magit-commit
 
       "u" '(:ignore true :which-key "utilities")
 
