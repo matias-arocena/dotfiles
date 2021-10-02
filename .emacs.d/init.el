@@ -382,7 +382,7 @@
       "p" '(:ignore t :which-key "project") 
       "pf"  'projectile-find-file
       "po"  '(projectile-switch-project :which-key "open")
-      "pF"  'consult-ripgrep
+      "pF"  'counsel-projectile-rg
       "pc"  'projectile-compile-project
       "pd"  'projectile-dired 
       "pn"  '(projectile-add-known-project :which-key "new project") 
