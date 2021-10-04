@@ -237,6 +237,7 @@
 	      ("zc" . 'treemacs-COLLAPSE-action)
 	      ("za" . 'treemacs-COLLAPSE-action)
 	      ("zo" . 'treemacs-COLLAPSE-action)
+          ("SPC r" . 'treemacs-edit-workspaces) 
 	      ("SPC w" . 'evil-window-map)))
   
 (use-package treemacs-projectile
