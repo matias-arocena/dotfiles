@@ -582,7 +582,7 @@
     "d" '(dap-hydra t :wk "debugger")))
 
 ;;; Languages
-;; C++
+;; CPP
 (use-package modern-cpp-font-lock
 :config (modern-c++-font-lock-global-mode t))
 
@@ -611,12 +611,24 @@
    (evil-local-set-key 'normal (kbd "SPC u f") 'clang-format-buffer)
    (evil-local-set-key 'normal (kbd "SPC u y") 'company-yasnippet)))
 
+(use-package shader-mode)
+
+(use-package cmake-mode)
+;; (use-package srefactor
+;;   :general
+;;   (mati/leader-keys 'c++-mode-map
+;;     "u r" '(srefactor-refactor-at-point :wk "refactor"))
+;;   :config (semantic-mode 1))
+
 ;; Unreal Engine
-  ;; (use-package ue
-    ;; :init   (ue-global-mode t))
+;; (use-package ue
+;;  :init   (ue-global-mode t))
 (use-package ue
   :straight (ue :type git :host gitlab :repo "unrealemacs/ue.el")
   :init (ue-global-mode))
+
+;;CSharp
+(use-package csharp-mode)
 
 ;; Golang
 ;;Goimports
@@ -782,3 +794,4 @@
 
 ;; Telegram
 (use-package telega)
+(put 'narrow-to-region 'disabled nil)
