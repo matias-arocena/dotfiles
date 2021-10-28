@@ -361,6 +361,11 @@
       (interactive)
       (find-file (expand-file-name "~/.emacs.d/init.el")))
 
+  (defun mati/open-todo ()
+      (interactive)
+      (find-file (expand-file-name "~/org/todo.org")))
+
+
   (mati/leader-keys
       "q" '(org-capture :which-key "capture")
       "a" '(:ingore true :which-key "agenda")
@@ -411,6 +416,8 @@
       "." '(find-file :which-key "open file")
       "fd" '(dired :which-key "directory")
       "fc" '(mati/open-config :which-key "config")
+      "ft" '(mati/open-todo :which-key "todo")
+      "fs" '(org-save-all-org-buffers :which-key "save org files")
 
       ":" '(eval-expression :which-key "eval")
       "s" '(shell :which-key "shell")
@@ -611,7 +618,9 @@
    (evil-local-set-key 'normal (kbd "SPC u f") 'clang-format-buffer)
    (evil-local-set-key 'normal (kbd "SPC u y") 'company-yasnippet)))
 
-(use-package shader-mode)
+;; Shader mode
+(use-package shader-mode
+  :config (add-to-list 'auto-mode-alist '("\\.hlsl\\'" . shader-mode)))
 
 (use-package cmake-mode)
 ;; (use-package srefactor
@@ -620,12 +629,9 @@
 ;;     "u r" '(srefactor-refactor-at-point :wk "refactor"))
 ;;   :config (semantic-mode 1))
 
-;; Unreal Engine
-;; (use-package ue
-;;  :init   (ue-global-mode t))
 (use-package ue
-  :straight (ue :type git :host gitlab :repo "unrealemacs/ue.el")
-  :init (ue-global-mode))
+  :init   (ue-global-mode +1)
+  :config (define-key ue-mode-map (kbd "C-c u") 'ue-command-map))
 
 ;;CSharp
 (use-package csharp-mode)
