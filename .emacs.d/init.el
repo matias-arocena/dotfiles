@@ -642,6 +642,9 @@
 (use-package go-mode
   :hook (go-mode . go-mode-setup))
 
+;; Java
+(use-package lsp-java :config (add-hook 'java-mode-hook 'lsp))
+
 ;;; ORG mode
 (use-package org
 :bind (:map org-mode-map
