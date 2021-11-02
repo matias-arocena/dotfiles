@@ -593,7 +593,10 @@
 (use-package modern-cpp-font-lock
 :config (modern-c++-font-lock-global-mode t))
 
-(use-package clang-format)
+(use-package clang-format
+  :general
+  (mati/leader-keys 'c++-mode-map
+    "u f" '(clang-format-buffer :wk "format buffer")))
 
 (use-package highlight-doxygen)
 
@@ -612,26 +615,19 @@
    (subword-mode t)
    (display-line-numbers-mode t)
    ;; Set the right margin according to Epic Games coding standard
-   (setq-local fill-column 120)
-
-   (evil-local-set-key 'normal (kbd "SPC u u") 'ue-command-map)
-   (evil-local-set-key 'normal (kbd "SPC u f") 'clang-format-buffer)
-   (evil-local-set-key 'normal (kbd "SPC u y") 'company-yasnippet)))
+   (setq-local fill-column 120)))
 
 ;; Shader mode
 (use-package shader-mode
   :config (add-to-list 'auto-mode-alist '("\\.hlsl\\'" . shader-mode)))
 
 (use-package cmake-mode)
-;; (use-package srefactor
-;;   :general
-;;   (mati/leader-keys 'c++-mode-map
-;;     "u r" '(srefactor-refactor-at-point :wk "refactor"))
-;;   :config (semantic-mode 1))
 
 (use-package ue
   :init   (ue-global-mode +1)
-  :config (define-key ue-mode-map (kbd "C-c u") 'ue-command-map))
+  :general
+  (mati/leader-keys 'ue-mode-map
+    "u u" '(ue-command-map :wk "unreal")))
 
 ;;CSharp
 (use-package csharp-mode)
