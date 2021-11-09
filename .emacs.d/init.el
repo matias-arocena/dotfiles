@@ -595,7 +595,9 @@
 
 (use-package clang-format
   :general
-  (mati/leader-keys 'c++-mode-map
+  (mati/leader-keys
+    :states 'normal
+    :keymaps 'c++-mode-map
     "u f" '(clang-format-buffer :wk "format buffer")))
 
 (use-package highlight-doxygen)
@@ -619,14 +621,19 @@
 
 ;; Shader mode
 (use-package shader-mode
-  :config (add-to-list 'auto-mode-alist '("\\.hlsl\\'" . shader-mode)))
+  :config
+  (add-to-list 'auto-mode-alist '("\\.hlsl\\'" . shader-mode))
+  (add-to-list 'auto-mode-alist '("\\.USF\\'" . shader-mode))
+  (add-to-list 'auto-mode-alist '("\\.usf\\'" . shader-mode)))
 
 (use-package cmake-mode)
 
 (use-package ue
   :init   (ue-global-mode +1)
   :general
-  (mati/leader-keys 'ue-mode-map
+  (mati/leader-keys
+    :states 'normal
+    :keymaps 'ue-mode-map
     "u u" '(ue-command-map :wk "unreal")))
 
 ;;CSharp
