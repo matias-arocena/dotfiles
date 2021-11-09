@@ -623,6 +623,8 @@
 (use-package shader-mode
   :config
   (add-to-list 'auto-mode-alist '("\\.hlsl\\'" . shader-mode))
+  (add-to-list 'auto-mode-alist '("\\.USH\\'" . shader-mode))
+  (add-to-list 'auto-mode-alist '("\\.ush\\'" . shader-mode))
   (add-to-list 'auto-mode-alist '("\\.USF\\'" . shader-mode))
   (add-to-list 'auto-mode-alist '("\\.usf\\'" . shader-mode)))
 
