@@ -821,3 +821,10 @@
  (setq pdf-annot-activate-created-annotations t))
  ;; use normal isearch
  ;(define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
+
+
+;; File manager
+(use-package ranger
+  :general
+  (mati/leader-keys
+    "f e" '(ranger :wk "explorer")))
