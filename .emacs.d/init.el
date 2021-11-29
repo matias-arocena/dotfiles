@@ -656,6 +656,7 @@
 
 ;;; ORG mode
 (use-package org
+:ensure org-plus-contrib
 :bind (:map org-mode-map
 	    ("C-c c" . org-ctrl-c-ctrl-c)
 	    ("C-c t" . org-todo)
@@ -674,30 +675,51 @@
     (add-to-list 'org-modules 'org-habit)
     (setq org-habit-graph-column 60)
 
+    (require 'org-checklist)
+    (add-to-list 'org-modules 'org-checklist)
+
+    (require 'org-protocol)
+    (add-to-list 'org-modules 'org-checklist)
+    
     (setq org-capture-templates
       `(("t" "Task" entry (file+olp "~/org/todo.org" "Inbox")
-		"* TODO %?\n  SCHEDULED: %U\n  %a\n  %i" :empty-lines 1)
+            "* TODO %?\n  SCHEDULED: %U\n  %a\n  %i" :empty-lines 1)
+        
+        ("j" "Journal" entry
+            (file+olp+datetree "~/org/journal.org")
+            "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
+            :clock-in :clock-resume
+            :empty-lines 1)
+        ("n" "Notes" entry
+            (file+olp+datetree "~/org/notes.org")
+            "* %<%I:%M %p> - %? :notes:\n\n\n\n"
+            :clock-in :clock-resume
+            :empty-lines 1)
+        ("i" "Interruption" entry
+            (file+olp+datetree "~/org/journal.org")
+            "\n* %<%I:%M %p> - Interruption %? :interruption:\n\n\n"
+            :clock-in :clock-resume
+            :empty-lines 1)
+        ("m" "Meeting" entry
+            (file+olp+datetree "~/org/todo.org" "Inbox")
+            "* DONE %<%I:%M %p> - %? :meeting:\n\n\n"
+            :clock-in :clock-resume
+            :empty-lines 1)))
 
-	("j" "Journal" entry
-		(file+olp+datetree "~/org/journal.org")
-		"\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
-		;; ,(dw/read-file-as-string "~/Notes/Templates/Daily.org")
-		:clock-in :clock-resume
-		:empty-lines 1)
-	("n" "notes" entry
-		(file+olp+datetree "~/org/notes.org")
-		"* %<%I:%M %p> - %a :notes:\n\n%?\n\n"
-		:clock-in :clock-resume
-		:empty-lines 1)
-	("m" "Metrics Capture")
-	("mw" "Weight" table-line
-	    (file+headline "~/org/gym.org" "Weight")
-	    "| %U | %^{Weight} | %^{Notes} |" :kill-buffer t)))
+        ;; ("x" "Metrics Capture")
+        ;; ("xw" "Weight" table-line
+            ;; (file+headline "~/org/gym.org" "Weight")
+            ;; "| %U | %^{Weight} | %^{Notes} |" :kill-buffer t)))
 
     (setq org-refile-targets
 	'(("notes.org" :maxlevel . 1)
 	("todo.org" :maxlevel . 1)))
 
+    (setq org-todo-state-tags-triggers
+        (quote (("CANCELLED" ("WAINTING") ("CANCELLED" . t))
+              ("WAITING" ("CANCELLED") ("WAITING" . t))
+              ("TODO" ("WAITING") ("CANCELLED"))
+              ("DONE" ("WAITING") ("CANCELLED")))))
 
     ;; Configure autosaving
     (advice-add 'org-agenda-todo :after
@@ -709,13 +731,17 @@
 	    '((sequence "TODO(t)" "SOMEDAY(s)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
     ;; Configure custom agenda views
     (setq org-agenda-custom-commands
-	'(("W" "Work Tasks" tags "+Au"))))
+	      '(("J" "Job Tasks" tags "+Au")
+            ("W" "Waiting" todo "WAITING")
+            ("S" "Someday" todo "SOMEDAY"))))
+
 
 
 (use-package org-bullets
 :hook (org-mode . org-bullets-mode)
 :custom (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
+    
 (org-babel-do-load-languages
 'org-babel-load-languages
 '((emacs-lisp . t)
