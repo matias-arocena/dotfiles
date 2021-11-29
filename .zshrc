@@ -304,10 +304,6 @@ alias dot='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 ###################
 xrdb -merge .Xresources 
 
-### Keyboard Layout
-###################
-setxkbmap -rules evdev -model evdev -layout us -variant altgr-intl
-
 ### Editor config
 #################
 export ALTERNATE_EDITOR=""
@@ -315,3 +311,8 @@ export EDITOR="emacsclient -t"                  # $EDITOR opens in terminal
 export VISUAL="emacsclient -c -a emacs"         # $VISUAL opens in GUI mode
 export GIT_EDITOR=$EDITOR
 alias edit=$EDITOR
+
+### Keyboard Layout
+###################
+setxkbmap -rules evdev -model evdev -layout us -variant altgr-intl
+
