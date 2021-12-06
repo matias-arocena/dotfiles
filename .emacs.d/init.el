@@ -678,7 +678,7 @@
     ;; (add-to-list 'org-modules 'org-checklist)
 
     (require 'org-protocol)
-    (add-to-list 'org-modules 'org-checklist)
+    (add-to-list 'org-modules 'org-protocol)
     
     (setq org-capture-templates
       `(("t" "Task" entry (file+olp "~/org/todo.org" "Inbox")
