@@ -57,7 +57,6 @@
   
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
 			("melpa-stable" . "https://stable.melpa.org/packages/")
-			("org" . "https://orgmode.org/elpa/")
 			("elpa" . "https://elpa.gnu.org/packages/")))
 
 (package-initialize)
@@ -656,7 +655,7 @@
 
 ;;; ORG mode
 (use-package org
-:ensure org-plus-contrib
+;; :ensure org-plus-contrib
 :bind (:map org-mode-map
 	    ("C-c c" . org-ctrl-c-ctrl-c)
 	    ("C-c t" . org-todo)
@@ -675,8 +674,8 @@
     (add-to-list 'org-modules 'org-habit)
     (setq org-habit-graph-column 60)
 
-    (require 'org-checklist)
-    (add-to-list 'org-modules 'org-checklist)
+    ;; (require 'org-checklist)
+    ;; (add-to-list 'org-modules 'org-checklist)
 
     (require 'org-protocol)
     (add-to-list 'org-modules 'org-checklist)
