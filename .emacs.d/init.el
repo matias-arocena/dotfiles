@@ -734,7 +734,16 @@
             ("W" "Waiting" todo "WAITING")
             ("S" "Someday" todo "SOMEDAY"))))
 
-
+(use-package org-pomodoro
+    :after evil-org
+    :config
+        (general-define-key
+            :keymaps 'org-agenda-mode-map
+            :states 'motion
+            "p" 'org-pomodoro)
+    :general
+        (mati/leader-keys
+          "a p" '(org-pomodoro :wk "pomodoro")))
 
 (use-package org-bullets
 :hook (org-mode . org-bullets-mode)
@@ -745,7 +754,7 @@
 'org-babel-load-languages
 '((emacs-lisp . t)
 (python . t)
-(C . t)
+(C . t) 
 (org . t)))
 (setq org-confirm-babel-evaluate nil)  
 (setq org-src-preserve-indentation t)
