@@ -673,6 +673,7 @@
     (require 'org-habit)
     (add-to-list 'org-modules 'org-habit)
     (setq org-habit-graph-column 60)
+    (setq org-habit-show-habits-only-for-today nil)
 
     ;; (require 'org-checklist)
     ;; (add-to-list 'org-modules 'org-checklist)
@@ -736,14 +737,11 @@
 
 (use-package org-pomodoro
     :after evil-org
-    :config
-        (general-define-key
-            :keymaps 'org-agenda-mode-map
-            :states 'motion
-            "p" 'org-pomodoro)
     :general
+        (:keymaps 'org-agenda-mode-map :states 'motion
+            "g p" 'org-pomodoro)
         (mati/leader-keys
-          "a p" '(org-pomodoro :wk "pomodoro")))
+            "a p" '(org-pomodoro :wk "pomodoro")))
 
 (use-package org-bullets
 :hook (org-mode . org-bullets-mode)
