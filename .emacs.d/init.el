@@ -345,6 +345,7 @@
     (require 'evil-org-agenda)
     (evil-org-agenda-set-keys))
 
+
 ;; Hydra
 (use-package hydra)
 
@@ -413,7 +414,7 @@
       "f" '(:ignore true :which-key "files")
       "fo" '(find-file :which-key "open")
       "." '(find-file :which-key "open file")
-      "fd" '(dired :which-key "directory")
+      "fd" '(dired-jump :which-key "directory")
       "fc" '(mati/open-config :which-key "config")
       "ft" '(mati/open-todo :which-key "todo")
       "fs" '(org-save-all-org-buffers :which-key "save org files")
@@ -701,7 +702,7 @@
             :clock-in :clock-resume
             :empty-lines 1)
         ("m" "Meeting" entry
-            (file+olp+datetree "~/org/todo.org" "Inbox")
+            (file+olp+datetree "~/org/notes.org" "Inbox")
             "* DONE %<%I:%M %p> - %? :meeting:\n\n\n"
             :clock-in :clock-resume
             :empty-lines 1)))
@@ -739,7 +740,8 @@
     :after evil-org
     :general
         (:keymaps 'org-agenda-mode-map :states 'motion
-            "g p" 'org-pomodoro)
+            "g p" 'org-pomodoro
+            "g y" 'org-todo-yesterday)
         (mati/leader-keys
             "a p" '(org-pomodoro :wk "pomodoro")))
 
@@ -853,10 +855,3 @@
  (setq pdf-annot-activate-created-annotations t))
  ;; use normal isearch
  ;(define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
-
-
-;; File manager
-(use-package ranger
-  :general
-  (mati/leader-keys
-    "f e" '(ranger :wk "explorer")))
