@@ -20,10 +20,10 @@ require('packer').startup(function()
   use {'goolord/alpha-nvim', requires = { 'kyazdani42/nvim-web-devicons' }}
   -- UI to select things (files, grep results, open buffers...)
   use { 'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' } }
-  use {'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
+  use {'nvim-telescope/telescope-fzf-native.nvim', branch='chad', run = 'python3 -m chadtree deps' }
   use 'mjlbach/onedark.nvim' -- Theme inspired by Atom
   use 'nvim-lualine/lualine.nvim' -- Fancier statusline
-  use {'kyazdani42/nvim-tree.lua', requires = { 'kyazdani42/nvim-web-devicons'}}
+  use {'ms-jpq/chadtree'} -- Tree view for files
   -- Add indentation guides even on blank lines
   use 'lukas-reineke/indent-blankline.nvim'
   -- Add git related info in the signs columns and popups
@@ -158,8 +158,7 @@ wk.register({
 })
 
 -- Tree Config
-require('nvim-tree').setup()
-vim.api.nvim_set_keymap('n', '<leader>tt', "<cmd>lua require'nvim-tree'.toggle()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>tt', "<cmd>CHADopen<CR>", { noremap = true, silent = true })
 
 -- Gitsigns
 require('gitsigns').setup {
@@ -272,6 +271,7 @@ local on_attach = function(_, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>ln', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>lr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>la', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>lc', '<cmd>call setqflist([])<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>ls', [[<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>]], opts)
   vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
 end
@@ -388,5 +388,9 @@ vim.api.nvim_set_keymap("n", "<leader>dr", "<cmd>lua require'dap'.repl_open()<CR
 
 require("dapui").setup()
 vim.api.nvim_set_keymap("n", "<leader>dt", "<cmd>lua require'dapui'.toggle()<CR>", { noremap = true, silent = true })
+
+
+-- vim-go setup
+vim.g["go_gopls_enabled"] = 0
 
 -- vim: ts=2 sts=2 sw=2 et
