@@ -31,7 +31,7 @@ if(-not($testchoco)){
     pip3 install ue4cli
     pip3 install ctags-ue4cli
     pip3 install neovim
-
+    choco install fzf
     choco install neovim -y
     Invoke-WebRequest -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim | New-Item "$(@($env:XDG_DATA_HOME, $env:LOCALAPPDATA)[$null -eq $env:XDG_DATA_HOME])/nvim-data/site/autoload/plug.vim" -Force
 
