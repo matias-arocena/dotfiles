@@ -13,6 +13,11 @@ if(-not($testchoco)){
 
     choco install sudo -y
     choco install git -y
+    choco install autohotkey -y
+    choco install powertoys -y
+    choco install workspacer -y
+
+    winget install gwsl
 
     Function DotFilesSetup {
         git --git-dir=$HOME/.cfg/ --work-tree=$HOME $args
