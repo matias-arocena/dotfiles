@@ -15,7 +15,7 @@ if(-not($testchoco)){
     choco install git -y
     choco install autohotkey -y
     choco install powertoys -y
-    choco install workspacer -y
+    choco install renderdoc -y
 
     winget install gwsl
 
