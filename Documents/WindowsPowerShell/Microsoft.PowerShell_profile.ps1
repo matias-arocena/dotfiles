@@ -14,10 +14,7 @@ if(-not($testchoco)){
     choco install sudo -y
     choco install git -y
     choco install autohotkey -y
-    choco install powertoys -y
     choco install renderdoc -y
-
-    winget install gwsl
 
     Function DotFilesSetup {
         git --git-dir=$HOME/.cfg/ --work-tree=$HOME $args
@@ -40,6 +37,9 @@ if(-not($testchoco)){
     choco install neovim -y
     Invoke-WebRequest -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim | New-Item "$(@($env:XDG_DATA_HOME, $env:LOCALAPPDATA)[$null -eq $env:XDG_DATA_HOME])/nvim-data/site/autoload/plug.vim" -Force
 
+    # cmd /c assoc .log => .log=txtfile
+    cmd /c ftype txtfile="$((Get-Command nvim-qt).Path)" "%1"
+
 } else {
     Function DotFilesSetup {
         git --git-dir=$HOME/.cfg/ --work-tree=$HOME $args
@@ -47,6 +47,4 @@ if(-not($testchoco)){
     Set-Alias -Name dot -Value DotFilesSetup
 }
 
-$Env:XDG_CONFIG_HOME = "$HOME\.config"
 $Env:GIT_EDITOR = "nvim"
-$Env:MYVIMRC = "$HOME\.config\nvim\init.vim"
