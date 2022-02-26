@@ -11,7 +11,6 @@ if(-not($testchoco)){
     Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
     Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
-    choco install sudo -y
     choco install git -y
 
     Function DotFilesSetup {
@@ -25,6 +24,8 @@ if(-not($testchoco)){
     dot checkout
     dot config --local status.showUntrackedFiles no
 
+    choco install sudo -y
+    choco install nerdfont-hack -y
     choco install autohotkey -y
     choco install renderdoc -y
     choco install mingw -y    
