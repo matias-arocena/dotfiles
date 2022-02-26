@@ -20,7 +20,7 @@ require('packer').startup(function()
   use {'goolord/alpha-nvim', requires = { 'kyazdani42/nvim-web-devicons' }}
   -- UI to select things (files, grep results, open buffers...)
   use { 'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' } }
-  use {'nvim-telescope/telescope-fzf-native.nvim'}
+  use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
   use 'mjlbach/onedark.nvim' -- Theme inspired by Atom
   use 'nvim-lualine/lualine.nvim' -- Fancier statusline
   use {'ms-jpq/chadtree'} -- Tree view for files

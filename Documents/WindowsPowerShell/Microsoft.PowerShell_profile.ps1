@@ -13,8 +13,6 @@ if(-not($testchoco)){
 
     choco install sudo -y
     choco install git -y
-    choco install autohotkey -y
-    choco install renderdoc -y
 
     Function DotFilesSetup {
         git --git-dir=$HOME/.cfg/ --work-tree=$HOME $args
@@ -27,6 +25,9 @@ if(-not($testchoco)){
     dot checkout
     dot config --local status.showUntrackedFiles no
 
+    choco install autohotkey -y
+    choco install renderdoc -y
+    choco install mingw -y    
     choco install nodejs-lts -y
     choco install ctags -y
     choco install python3 -y
